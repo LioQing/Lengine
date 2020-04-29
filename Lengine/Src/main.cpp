@@ -6,17 +6,19 @@
 
 int main()
 {
-    Game game = Game();
     DeltaTime delta_time = 0u;
-
     sf::Clock delta_clock;
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "Lengine");
     window.setFramerateLimit(60);
 
+    Game game = Game(window);
+
     while (window.isOpen())
     {
+        game.HandleEvent();
         game.Update(delta_time);
-        std::cout << delta_time << std::endl;
+        if (delta_time != 0)std::cout << 1000/delta_time << std::endl;
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -25,7 +27,7 @@ int main()
         }
 
         window.clear();
-
+        game.Render();
         window.display();
 
         delta_time = delta_clock.restart().asMilliseconds();

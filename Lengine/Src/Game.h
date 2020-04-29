@@ -1,22 +1,22 @@
 #pragma once
 
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <lecs.h>
 
 class Game
 {
 private:
 
+	sf::RenderWindow& window_;
+
 public:
 
 	lecs::ECSManagers ecs_managers;
 
-	Game()
-	{
-		ecs_managers = lecs::ECSManagers();
-	}
+	Game(sf::RenderWindow& window);
 
-	void Update(DeltaTime dt)
-	{
-		ecs_managers.UpdateECSManagers(dt);
-	}
+	void HandleEvent();
+	void Update(DeltaTime dt);
+	void Render();
 };
