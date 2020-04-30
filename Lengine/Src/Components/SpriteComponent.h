@@ -6,4 +6,7 @@
 struct SpriteComponent : public lecs::Component
 {
 	sf::Sprite sprite;
+
+	SpriteComponent(std::string id);
+	SpriteComponent(std::string id, float scale);
 };

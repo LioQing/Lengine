@@ -4,6 +4,8 @@
 
 #include "Game.h"
 
+Game* game;
+
 int main()
 {
     DeltaTime delta_time = 0u;
@@ -12,13 +14,13 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "Lengine");
     window.setFramerateLimit(60);
 
-    Game game = Game(window);
-    game.Init();
+    game = new Game(window);
+    game->Init();
 
     while (window.isOpen())
     {
-        game.HandleEvent();
-        game.Update(delta_time);
+        game->HandleEvent();
+        game->Update(delta_time);
         //if (delta_time != 0)std::cout << 1000/delta_time << std::endl;
 
         sf::Event event;
@@ -28,7 +30,7 @@ int main()
         }
 
         window.clear();
-        game.Render();
+        game->Render();
         window.display();
 
         delta_time = delta_clock.restart().asMilliseconds();
