@@ -13,12 +13,13 @@ int main()
     window.setFramerateLimit(60);
 
     Game game = Game(window);
+    game.Init();
 
     while (window.isOpen())
     {
         game.HandleEvent();
         game.Update(delta_time);
-        if (delta_time != 0)std::cout << 1000/delta_time << std::endl;
+        //if (delta_time != 0)std::cout << 1000/delta_time << std::endl;
 
         sf::Event event;
         while (window.pollEvent(event))
