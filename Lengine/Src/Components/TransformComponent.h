@@ -1,15 +1,15 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <Vector2D.h>
 #include <lecs.h>
 
 struct TransformComponent : public lecs::Component
 {
-	sf::Vector2f position;
-	sf::Vector2f velocity;
+	Vector2Df position;
+	Vector2Df velocity;
 	float speed;
 
-	TransformComponent(sf::Vector2f position);
-	TransformComponent(sf::Vector2f position, float speed);
-	TransformComponent(sf::Vector2f position, float speed, sf::Vector2f velocity);
+	TransformComponent(Vector2Df position);
+	TransformComponent(Vector2Df position, float speed);
+	TransformComponent(Vector2Df position, float speed, Vector2Df velocity);
 };

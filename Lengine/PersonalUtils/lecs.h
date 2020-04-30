@@ -582,6 +582,8 @@ namespace lecs
 	{
 	public:
 
+		virtual void HandleInput(EntityManager*, EventManager*, DeltaTime) {}
+
 		// function to be called everytime system manager is updated
 		virtual void Update(EntityManager*, EventManager*, DeltaTime) {}
 	};
@@ -591,14 +593,13 @@ namespace lecs
 	{
 	private:
 
-		
+		EntityManager* entity_manager;
 		EventManager* event_manager;
 
 		uint32_t next_system_id = 0;
 
 	public:
 
-		EntityManager* entity_manager;
 		// vector of systems
 		std::vector<std::unique_ptr<System>> systems;
 
@@ -683,6 +684,14 @@ namespace lecs
 			for (auto& s : systems)
 			{
 				s->Update(entity_manager, event_manager, delta_time);
+			}
+		}
+
+		void HandleInput(DeltaTime delta_time)
+		{
+			for (auto& s : systems)
+			{
+				s->HandleInput(entity_manager, event_manager, delta_time);
 			}
 		}
 	};

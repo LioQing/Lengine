@@ -20,7 +20,7 @@ public:
 	Game(sf::RenderWindow& window);
 
 	void Init();
-	void HandleEvent();
+	void HandleInput(DeltaTime dt);
 	void Update(DeltaTime dt);
 	void Render();
 };

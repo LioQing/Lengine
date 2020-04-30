@@ -16,21 +16,23 @@ void Game::Init()
 
 	lecs::Entity* testEntity = &ecs_managers.entity_manager->AddEntity();
 	SpriteComponent* sprite = &testEntity->AddComponent<SpriteComponent>("player", 3.0f);
-	TransformComponent* transform = &testEntity->AddComponent<TransformComponent>(sf::Vector2f(400, 320));
+	TransformComponent* transform = &testEntity->AddComponent<TransformComponent>(Vector2Df(400, 320), 2.4f);
 }
 
-void Game::HandleEvent()
+void Game::HandleInput(DeltaTime dt)
 {
+	ecs_managers.system_manager->HandleInput(dt);
 }
 
 void Game::Update(DeltaTime dt)
 {
 	ecs_managers.UpdateECSManagers(dt);
+
+	ecs_managers.system_manager->GetSystem<MovementSystem>().LateUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 }
 
 void Game::Render()
 {
-	//std::cout << ecs_managers.entity_manager.EntityFilter<SpriteComponent>().entities.size() << std::endl;
 	for (auto& e : ecs_managers.entity_manager->EntityFilter<SpriteComponent>().entities)
 	{
 		window.draw(e->GetComponent<SpriteComponent>().sprite);

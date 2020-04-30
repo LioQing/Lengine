@@ -1,6 +1,6 @@
-#include <lecs.h>
-
 #include "TextureManager.h"
+
+#include <lecs.h>
 
 void TextureManager::InitTextures()
 {

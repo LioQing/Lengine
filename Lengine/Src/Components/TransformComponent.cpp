@@ -1,16 +1,16 @@
 #include "TransformComponent.h"
 
-TransformComponent::TransformComponent(sf::Vector2f position) :
-	position(position), speed(0.0f), velocity(sf::Vector2f(0.0f, 0.0f))
+TransformComponent::TransformComponent(Vector2Df position) :
+	position(position), speed(1.0f), velocity(Vector2Df(0.0f, 0.0f))
 {
 }
 
-TransformComponent::TransformComponent(sf::Vector2f position, float speed) :
-	position(position), speed(speed), velocity(sf::Vector2f(0.0f, 0.0f))
+TransformComponent::TransformComponent(Vector2Df position, float speed) :
+	position(position), speed(speed), velocity(Vector2Df(0.0f, 0.0f))
 {
 }
 
-TransformComponent::TransformComponent(sf::Vector2f position, float speed, sf::Vector2f velocity) :
+TransformComponent::TransformComponent(Vector2Df position, float speed, Vector2Df velocity) :
 	position(position), speed(speed), velocity(velocity)
 {
 }
