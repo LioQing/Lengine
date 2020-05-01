@@ -3,16 +3,11 @@
 #include <SFML/Graphics.hpp>
 #include <lecs.h>
 #include <Vector2D.h>
+#include <vector>
 
-class TileMapComponent : public lecs::Component, public sf::Drawable, public sf::Transformable
+struct TileMapComponent : public lecs::Component
 {
-private:
-
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-public:
-
-	sf::VertexArray tiles;
+	std::vector<sf::Sprite> tiles;
 	std::string texture_id;
 	float scale;
 	uint32_t tile_size;

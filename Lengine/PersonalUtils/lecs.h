@@ -585,7 +585,7 @@ namespace lecs
 	public:
 
 		virtual void HandleInput(EntityManager*, EventManager*, DeltaTime) {}
-		virtual void Render(EntityManager*, EventManager*, sf::RenderWindow*) {}
+		virtual void Draw(EntityManager*, EventManager*, sf::RenderWindow*) {}
 
 		// function to be called everytime system manager is updated
 		virtual void Update(EntityManager*, EventManager*, DeltaTime) {}
@@ -698,11 +698,11 @@ namespace lecs
 			}
 		}
 
-		void Render(sf::RenderWindow* window)
+		void Draw(sf::RenderWindow* window)
 		{
 			for (auto& s : systems)
 			{
-				s->Render(entity_manager, event_manager, window);
+				s->Draw(entity_manager, event_manager, window);
 			}
 		}
 	};

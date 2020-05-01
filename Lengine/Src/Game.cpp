@@ -12,9 +12,9 @@ void Game::Init()
 {
 	texture_manager.InitTextures();
 
+	ecs_managers.system_manager->AddSystem<TileMapSystem>();
 	ecs_managers.system_manager->AddSystem<MovementSystem>();
 	ecs_managers.system_manager->AddSystem<SpriteSystem>();
-	ecs_managers.system_manager->AddSystem<TileMapSystem>();
 
 	lecs::Entity* map = &ecs_managers.entity_manager->AddEntity();
 	TileMapComponent* tile_map = &map->AddComponent<TileMapComponent>("terrain", 32, 3);
@@ -42,6 +42,5 @@ void Game::Update(DeltaTime dt)
 
 void Game::Render()
 {
-	ecs_managers.system_manager->GetSystem<TileMapSystem>().Render(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
-	ecs_managers.system_manager->GetSystem<SpriteSystem>().Render(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
+	ecs_managers.system_manager->Draw(&window);
 }
