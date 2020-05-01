@@ -5,7 +5,7 @@
 Game::Game(sf::RenderWindow& window) : window(window)
 {
 	ecs_managers = lecs::ECSManagers();
-	lecs::logger.AlwaysShow();
+	//lecs::logger.AlwaysShow();
 }
 
 void Game::Init()
@@ -14,14 +14,18 @@ void Game::Init()
 
 	ecs_managers.system_manager->AddSystem<MovementSystem>();
 	ecs_managers.system_manager->AddSystem<SpriteSystem>();
+	ecs_managers.system_manager->AddSystem<TileMapSystem>();
 
-	lecs::Entity* testEntity = &ecs_managers.entity_manager->AddEntity();
-	SpriteComponent* sprite = &testEntity->AddComponent<SpriteComponent>("player", Vector2Df(16.0f, 16.0f));
-	TransformComponent* transform = &testEntity->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.0f, 3.0f), 2.4f);
-	AnimationComponent* animation = &testEntity->AddComponent<AnimationComponent>();
+	lecs::Entity* map = &ecs_managers.entity_manager->AddEntity();
+	TileMapComponent* tile_map = &map->AddComponent<TileMapComponent>("terrain", 32, 3);
+	tile_map->LoadMap("Assets/Island.csv", 20, 20);
+
+	lecs::Entity* player = &ecs_managers.entity_manager->AddEntity();
+	SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.0f, 16.0f));
+	TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.0f, 3.0f), 2.4f);
+	AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 	animation->AddAnimation("idle", 0, 2, 300);
 	animation->AddAnimation("walk", 1, 8, 100);
-	animation->SetCurrent("idle");
 }
 
 void Game::HandleInput(DeltaTime dt)
@@ -38,5 +42,6 @@ void Game::Update(DeltaTime dt)
 
 void Game::Render()
 {
-	ecs_managers.system_manager->Render(&window);
+	ecs_managers.system_manager->GetSystem<TileMapSystem>().Render(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
+	ecs_managers.system_manager->GetSystem<SpriteSystem>().Render(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 }

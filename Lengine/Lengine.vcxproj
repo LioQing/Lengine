@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="Src\Components\AnimationComponent.cpp" />
     <ClCompile Include="Src\Components\SpriteComponent.cpp" />
+    <ClCompile Include="Src\Components\TileMapComponent.cpp" />
     <ClCompile Include="Src\Components\TransformComponent.cpp" />
     <ClCompile Include="Src\Game.cpp" />
     <ClCompile Include="Src\main.cpp" />
@@ -153,13 +154,16 @@
     <ClCompile Include="Src\Managers\TextureManager.cpp" />
     <ClCompile Include="Src\Systems\MovementSystem.cpp" />
     <ClCompile Include="Src\Systems\SpriteSystem.cpp" />
+    <ClCompile Include="Src\Systems\TileMapSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PersonalUtils\CSVReader.h" />
     <ClInclude Include="PersonalUtils\lecs.h" />
     <ClInclude Include="PersonalUtils\Vector2D.h" />
     <ClInclude Include="Src\Components\AnimationComponent.h" />
     <ClInclude Include="Src\Components\Components.h" />
     <ClInclude Include="Src\Components\SpriteComponent.h" />
+    <ClInclude Include="Src\Components\TileMapComponent.h" />
     <ClInclude Include="Src\Components\TransformComponent.h" />
     <ClInclude Include="Src\Game.h" />
     <ClInclude Include="Src\Managers\InputManager.h" />
@@ -167,6 +171,7 @@
     <ClInclude Include="Src\Systems\Systems.h" />
     <ClInclude Include="Src\Systems\MovementSystem.h" />
     <ClInclude Include="Src\Systems\SpriteSystem.h" />
+    <ClInclude Include="Src\Systems\TileMapSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

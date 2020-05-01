@@ -332,3 +332,4 @@ public:
 typedef Vec2<double> Vector2D;
 typedef Vec2<float> Vector2Df;
 typedef Vec2<int> Vector2Di;
+typedef Vec2<unsigned int> Vector2Du;

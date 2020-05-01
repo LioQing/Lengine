@@ -5,6 +5,7 @@
 void TextureManager::InitTextures()
 {
 	AddTexture("player", "Assets/player.png");
+	AddTexture("terrain", "Assets/TileSet_Export.png");
 }
 
 void TextureManager::AddTexture(std::string id, const char* path)
