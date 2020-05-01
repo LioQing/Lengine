@@ -45,6 +45,31 @@ void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Even
 			transform->velocity = transform->velocity.Normalize();
 		}
 
+		// animation
+		if (e->HasComponent<AnimationComponent>())
+		{
+			AnimationComponent* animation = &e->GetComponent<AnimationComponent>();
+			
+			if (transform->velocity.Magnitude() > 0)
+			{
+				animation->SetCurrent("walk");
+			}
+			else
+			{
+				animation->SetCurrent("idle");
+			}
+		}
+
+		// sprite flip
+		if (transform->velocity.x < 0)
+		{
+			transform->scale.x = fabs(transform->scale.x) * -1;
+		}
+		else if (transform->velocity.x > 0)
+		{
+			transform->scale.x = fabs(transform->scale.x);
+		}
+
 		transform->position += transform->velocity * transform->speed;
 	}
 }

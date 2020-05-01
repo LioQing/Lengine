@@ -33,7 +33,7 @@ int main()
         game->Render();
         window.display();
 
-        delta_time = delta_clock.restart().asMilliseconds();
+        delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
     }
 
     return 0;

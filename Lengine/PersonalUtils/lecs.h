@@ -9,10 +9,12 @@
 #include <bitset>
 #include <queue>
 
+#include <SFML/Graphics.hpp>
+
 // unit of time of difference in time between the previous fame the next frame
 // to be passed into systems
 // can be ignored if not used
-typedef uint32_t DeltaTime;
+typedef float DeltaTime;
 
 namespace lecs
 {
@@ -583,6 +585,7 @@ namespace lecs
 	public:
 
 		virtual void HandleInput(EntityManager*, EventManager*, DeltaTime) {}
+		virtual void Render(EntityManager*, EventManager*, sf::RenderWindow*) {}
 
 		// function to be called everytime system manager is updated
 		virtual void Update(EntityManager*, EventManager*, DeltaTime) {}
@@ -692,6 +695,14 @@ namespace lecs
 			for (auto& s : systems)
 			{
 				s->HandleInput(entity_manager, event_manager, delta_time);
+			}
+		}
+
+		void Render(sf::RenderWindow* window)
+		{
+			for (auto& s : systems)
+			{
+				s->Render(entity_manager, event_manager, window);
 			}
 		}
 	};
