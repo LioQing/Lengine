@@ -25,10 +25,10 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 
 		// off screen no draw
 		if (
-			sprite->sprite.getGlobalBounds().left > window->getSize().x ||
-			sprite->sprite.getGlobalBounds().top > window->getSize().y ||
-			sprite->sprite.getGlobalBounds().left + sprite->sprite.getGlobalBounds().width < 0 ||
-			sprite->sprite.getGlobalBounds().top + sprite->sprite.getGlobalBounds().height < 0
+			sprite->sprite.getGlobalBounds().left > game->camera_manager.GetViewBounds().left + game->camera_manager.GetViewBounds().width ||
+			sprite->sprite.getGlobalBounds().top > game->camera_manager.GetViewBounds().top + game->camera_manager.GetViewBounds().height ||
+			sprite->sprite.getGlobalBounds().left + sprite->sprite.getGlobalBounds().width < game->camera_manager.GetViewBounds().left ||
+			sprite->sprite.getGlobalBounds().top + sprite->sprite.getGlobalBounds().height < game->camera_manager.GetViewBounds().top
 			)
 		{
 			continue;

@@ -1,6 +1,9 @@
 #include "TileMapSystem.h"
 
 #include "../Components/Components.h"
+#include "../Game.h"
+
+extern Game* game;
 
 void TileMapSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {
@@ -13,10 +16,10 @@ void TileMapSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager
 		{
 			// off screen no draw
 			if (
-				s.getGlobalBounds().left > window->getSize().x ||
-				s.getGlobalBounds().top > window->getSize().y ||
-				s.getGlobalBounds().left + s.getGlobalBounds().width < 0 ||
-				s.getGlobalBounds().top + s.getGlobalBounds().height < 0
+				s.getGlobalBounds().left > game->camera_manager.GetViewBounds().left + game->camera_manager.GetViewBounds().width ||
+				s.getGlobalBounds().top > game->camera_manager.GetViewBounds().top + game->camera_manager.GetViewBounds().height ||
+				s.getGlobalBounds().left + s.getGlobalBounds().width < game->camera_manager.GetViewBounds().left ||
+				s.getGlobalBounds().top + s.getGlobalBounds().height < game->camera_manager.GetViewBounds().top
 				)
 			{
 				continue;

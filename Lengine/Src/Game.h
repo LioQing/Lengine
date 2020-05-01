@@ -5,6 +5,7 @@
 #include <lecs.h>
 
 #include "Managers/TextureManager.h"
+#include "Managers/CameraManager.h"
 
 class Game
 {
@@ -16,6 +17,7 @@ public:
 
 	lecs::ECSManagers ecs_managers;
 	TextureManager texture_manager;
+	CameraManager camera_manager;
 
 	Game(sf::RenderWindow& window);
 

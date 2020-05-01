@@ -5,7 +5,9 @@
 Game::Game(sf::RenderWindow& window) : window(window)
 {
 	ecs_managers = lecs::ECSManagers();
-	//lecs::logger.AlwaysShow();
+	camera_manager.SetWindow(&window);
+
+	lecs::logger.AlwaysShow();
 }
 
 void Game::Init()
@@ -26,6 +28,8 @@ void Game::Init()
 	AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 	animation->AddAnimation("idle", 0, 2, 300);
 	animation->AddAnimation("walk", 1, 8, 100);
+
+	camera_manager.SetFollow(&transform->position);
 }
 
 void Game::HandleInput(DeltaTime dt)
@@ -42,5 +46,7 @@ void Game::Update(DeltaTime dt)
 
 void Game::Render()
 {
+	camera_manager.Draw();
+	window.setView(camera_manager.camera);
 	ecs_managers.system_manager->Draw(&window);
 }
