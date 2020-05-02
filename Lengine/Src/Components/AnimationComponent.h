@@ -11,6 +11,15 @@ struct AnimationComponent : public lecs::Component
 		uint32_t frame;
 		uint32_t delay;
 
+		Animation& operator=(const Animation& anim)
+		{
+			index = anim.index;
+			frame = anim.frame;
+			delay = anim.delay;
+
+			return *this;
+		}
+
 		Animation() = default;
 		Animation(uint32_t i, uint32_t f, uint32_t d) : index(i), frame(f), delay(d) {}
 	};

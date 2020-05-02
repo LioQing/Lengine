@@ -4,7 +4,6 @@
 
 Game::Game(sf::RenderWindow& window) : window(window)
 {
-	ecs_managers = lecs::ECSManagers();
 	camera_manager.SetWindow(&window);
 
 	lecs::logger.AlwaysShow();
@@ -28,6 +27,7 @@ void Game::Init()
 	AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 	animation->AddAnimation("idle", 0, 2, 300);
 	animation->AddAnimation("walk", 1, 8, 100);
+	ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_PLAYER);
 
 	camera_manager.SetFollow(&transform->position);
 }
