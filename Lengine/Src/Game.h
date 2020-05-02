@@ -16,6 +16,7 @@ private:
 public:
 
 	lecs::ECSManagers ecs_managers;
+	lecs::Logger* logger;
 	TextureManager texture_manager;
 	CameraManager camera_manager;
 

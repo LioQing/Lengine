@@ -24,7 +24,7 @@ void TileMapSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager
 			{
 				continue;
 			}
-
+			
 			window->draw(s);
 		}
 	}

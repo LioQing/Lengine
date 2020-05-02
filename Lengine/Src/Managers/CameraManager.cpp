@@ -1,8 +1,9 @@
 #include "CameraManager.h"
 
-void CameraManager::Draw()
+void CameraManager::Draw(sf::RenderWindow* window)
 {
 	camera.setCenter(follow->sfVector2f());
+    window->setView(camera);
 }
 
 void CameraManager::SetCenter(Vector2Df center)
@@ -12,7 +13,6 @@ void CameraManager::SetCenter(Vector2Df center)
 
 void CameraManager::SetWindow(sf::RenderWindow* window)
 {
-	this->window = window;
 	camera.setSize(sf::Vector2f(window->getSize()));
 }
 

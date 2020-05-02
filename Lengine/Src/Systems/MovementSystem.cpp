@@ -6,7 +6,7 @@
 
 void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
-	for (auto& e : entity_manager->GetGroup(lecs::GRP_PLAYER).entities)
+	for (auto& e : entity_manager->GetGroup(lecs::GRP_PLAYER).EntityFilter<TransformComponent>().EntityFilter<SpriteComponent>().entities)
 	{
 		TransformComponent* transform = &e->GetComponent<TransformComponent>();
 		SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
@@ -63,11 +63,11 @@ void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Even
 		// sprite flip
 		if (transform->velocity.x < 0)
 		{
-			transform->scale.x = fabs(transform->scale.x) * -1;
+			transform->scale.x = fabsf(transform->scale.x) * -1;
 		}
 		else if (transform->velocity.x > 0)
 		{
-			transform->scale.x = fabs(transform->scale.x);
+			transform->scale.x = fabsf(transform->scale.x);
 		}
 
 		transform->position += transform->velocity * transform->speed;

@@ -8,7 +8,6 @@ class CameraManager
 private:
 
 	Vector2Df* follow;
-	sf::RenderWindow* window;
 
 public:
 
@@ -16,7 +15,7 @@ public:
 
 	CameraManager() = default;
 
-	void Draw();
+	void Draw(sf::RenderWindow* window);
 
 	void SetCenter(Vector2Df center);
 	void SetWindow(sf::RenderWindow* window);

@@ -4,3 +4,5 @@
 #include "SpriteComponent.h"
 #include "AnimationComponent.h"
 #include "TileMapComponent.h"
+#include "ColliderComponent.h"
+#include "BoundaryComponent.h"
