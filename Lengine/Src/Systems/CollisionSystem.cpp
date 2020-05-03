@@ -1,5 +1,7 @@
 #include "CollisionSystem.h"
 
+#include <vector>
+
 #include "../Game.h"
 
 extern Game* game;
@@ -63,15 +65,22 @@ void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMan
 	{
 		ColliderComponent* kinematic_col = &e1->GetComponent<ColliderComponent>();
 		if (!kinematic_col->isKinematic) continue;
+		
+		std::vector<ColliderComponent*> collided;
+		ColliderComponent tmp_resolved_col(*kinematic_col);
+		Vector2Df resolve(0.0f, 0.0f);
 
 		for (auto& e2 : entity_manager->EntityFilter<ColliderComponent>().entities)
 		{
 			ColliderComponent* static_col = &e2->GetComponent<ColliderComponent>();
 			if (static_col->isKinematic) continue;
 
-			if (AABB(*kinematic_col, *static_col))
+			if (AABB(tmp_resolved_col, *static_col))
 			{
-				std::cout << e1->id << "hit" << e2->id << " | ";
+				collided.emplace_back(static_col);
+				resolve = ApplyResolve(resolve, ResolveOverlap(tmp_resolved_col, *static_col));
+
+				tmp_resolved_col.position = kinematic_col->position + resolve;
 			}
 		}
 
@@ -80,18 +89,94 @@ void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMan
 			for (auto boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
 			{
 				if (boundary_col == nullptr) continue;
-				if (AABB(*kinematic_col, *boundary_col))
+
+				if (AABB(tmp_resolved_col, *boundary_col))
 				{
-					std::cout << e1->id << "hit" << e2->id << " | ";
+					collided.emplace_back(boundary_col);
+					resolve = ApplyResolve(resolve, ResolveOverlap(tmp_resolved_col, *boundary_col));
+
+					tmp_resolved_col.position = kinematic_col->position + resolve;
 				}
 			}
+		}
+
+		tmp_resolved_col = *kinematic_col;
+		Vector2Df reverse_resolve(0.0f, 0.0f);
+		for (auto itr = collided.rbegin(); itr != collided.rend(); ++itr)
+		{
+			ColliderComponent* col = *itr;
+
+			if (AABB(tmp_resolved_col, *col))
+			{
+				reverse_resolve = ApplyResolve(reverse_resolve, ResolveOverlap(tmp_resolved_col, *col));
+
+				tmp_resolved_col.position = kinematic_col->position + reverse_resolve;
+			}
+		}
+
+		if (!e1->HasComponent<TransformComponent>())
+		{
+			game->logger->AddLog
+			(
+				"Error: Entity " + std::to_string(e1->id) + " doesn't have Transform Component for collision resolve",
+				lecs::LT_ERROR, lecs::LT_ENTITY, lecs::LT_COMPONENT
+			);
+			continue;
+		}
+
+		TransformComponent* transform = &e1->GetComponent<TransformComponent>();
+
+		if (resolve.Magnitude() < reverse_resolve.Magnitude()) transform->position += resolve;
+		else transform->position += reverse_resolve;
+
+		if (kinematic_col->followTransform)
+		{
+			kinematic_col->position = transform->position;
 		}
 	}
 }
 
-Vector2D CollisionSystem::ResolveOverlap(const ColliderComponent& rect1, const ColliderComponent& rect2)
+Vector2Df CollisionSystem::ResolveOverlap(const ColliderComponent& kinematic_col, const ColliderComponent& static_col)
 {
-	return Vector2D();
+	Vector2D vMove = Vector2D(kinematic_col.position.x, kinematic_col.position.y);
+	Vector2D vStatic = Vector2D(static_col.position.x, static_col.position.y);
+	Vector2D diff = (vMove - vStatic) * Vector2D(kinematic_col.height + static_col.height, kinematic_col.width + static_col.width);
+
+	if (fabs(diff.x) > fabs(diff.y))
+	{
+		if (diff.x > 0)
+		{
+			return Vector2Df(static_col.position.x + static_col.width * 0.5 - kinematic_col.position.x + kinematic_col.width * 0.5, 0);
+		}
+		else
+		{
+			return Vector2Df(-(kinematic_col.position.x + kinematic_col.width * 0.5 - static_col.position.x + static_col.width * 0.5), 0);
+		}
+	}
+	else
+	{
+		if (diff.y > 0)
+		{
+			return Vector2Df(0, static_col.position.y + static_col.height * 0.5 - kinematic_col.position.y + kinematic_col.height * 0.5);
+		}
+		else
+		{
+			return Vector2Df(0, -(kinematic_col.position.y + kinematic_col.height * 0.5 - static_col.position.y + static_col.height * 0.5));
+		}
+	}
+}
+
+Vector2Df CollisionSystem::ApplyResolve(Vector2Df current_resolve, Vector2Df new_resolve)
+{
+	if (fabsf(new_resolve.x) > fabsf(current_resolve.x))
+	{
+		return Vector2Df(new_resolve.x, current_resolve.y);
+	}
+	else if (fabsf(new_resolve.y) > fabsf(current_resolve.y))
+	{
+		return Vector2Df(current_resolve.x, new_resolve.y);
+	}
+	return current_resolve;
 }
 
 bool CollisionSystem::AABB(const ColliderComponent& col1, const ColliderComponent& col2)

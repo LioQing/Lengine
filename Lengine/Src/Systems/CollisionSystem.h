@@ -11,7 +11,8 @@ struct CollisionSystem : public lecs::System
 	void Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt) override;
 	void Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window) override;
 
-	Vector2D ResolveOverlap(const ColliderComponent& rect1, const ColliderComponent& rect2);
+	Vector2Df ResolveOverlap(const ColliderComponent& kinematic_col, const ColliderComponent& static_col);
+	Vector2Df ApplyResolve(Vector2Df current_resolve, Vector2Df new_resolve);
 
 	bool AABB(const ColliderComponent& col1, const ColliderComponent& col2);
 };
