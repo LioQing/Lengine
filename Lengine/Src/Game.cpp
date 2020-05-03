@@ -28,9 +28,9 @@ void Game::Init()
 	tilemap->LoadMap("Assets/Island.csv", 20, 20);
 
 	lecs::Entity* player = &ecs_managers.entity_manager->AddEntity();
-	ItemComponent* item = &player->AddComponent<ItemComponent>("glock", true, true);
-	SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.0f, 16.0f));
-	TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.0f, 3.0f), 2.4f);
+	ItemComponent* item = &player->AddComponent<ItemComponent>("glock", 32.f, true, true);
+	SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
+	TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.f, 3.f), 2.4f);
 	ColliderComponent* collider = &player->AddComponent<ColliderComponent>(96, 48, true, true);
 	AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 	animation->AddAnimation("idle", 0, 2, 300);

@@ -27,7 +27,7 @@ void ItemSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::EventMan
 				TransformComponent* transform = &e->GetComponent<TransformComponent>();
 
 				if (item->follow_transform) item->center = transform->position;
-				if (item->scale_transform) item->sprite.setScale(transform->scale.sfVector2f());
+				if (item->scale_transform) item->scale = transform->scale.Abs();
 			}
 		}
 	}
