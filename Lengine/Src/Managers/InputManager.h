@@ -1,26 +1,13 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <lecs.h>
-
-class InputHandler
-{
-public:
-
-	virtual void HandleInput(lecs::EntityManager* entity_manager) {}
-};
+#include <SFML/Graphics.hpp>
+#include <Vector2D.h>
 
 class InputManager
 {
-private:
-
-	lecs::EntityManager* entity_manager;
-	std::vector<std::unique_ptr<InputHandler>> handlers;
-
 public:
 
-	InputManager(lecs::EntityManager* entity_manager);
+	Vector2Df world_mouse_pos;
 
-	void Update();
+	void HandleInput(sf::RenderWindow* window);
 };

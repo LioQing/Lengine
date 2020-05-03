@@ -6,7 +6,7 @@ void TextureManager::InitTextures()
 {
 	AddTexture("player", "Assets/player.png");
 	AddTexture("terrain", "Assets/TileSet_Export.png");
-	AddTexture("collider", "Assets/ColTex.png");
+	AddTexture("glock", "Assets/csgo_glock.png");
 }
 
 void TextureManager::AddTexture(std::string id, const char* path)

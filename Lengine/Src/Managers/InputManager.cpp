@@ -1,9 +1,10 @@
 #include "InputManager.h"
 
-InputManager::InputManager(lecs::EntityManager* entity_manager) : entity_manager(entity_manager)
-{
-}
+#include "../Game.h"
 
-void InputManager::Update()
+extern Game* game;
+
+void InputManager::HandleInput(sf::RenderWindow* window)
 {
+	world_mouse_pos = Vector2D::ToVector2D<float>(window->mapPixelToCoords(sf::Mouse::getPosition(*window), game->camera_manager.camera));
 }

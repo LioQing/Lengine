@@ -6,3 +6,4 @@
 #include "TileMapComponent.h"
 #include "ColliderComponent.h"
 #include "BoundaryComponent.h"
+#include "ItemComponent.h"

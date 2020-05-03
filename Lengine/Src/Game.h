@@ -4,21 +4,23 @@
 #include <SFML/Graphics.hpp>
 #include <lecs.h>
 
-#include "Managers/TextureManager.h"
-#include "Managers/CameraManager.h"
+#include "Managers/Managers.h"
 
 class Game
 {
 private:
 
+	sf::Event event;
 	sf::RenderWindow& window;
 
 public:
 
 	lecs::ECSManagers ecs_managers;
 	lecs::Logger* logger;
+
 	TextureManager texture_manager;
 	CameraManager camera_manager;
+	InputManager input_manager;
 
 	Game(sf::RenderWindow& window);
 

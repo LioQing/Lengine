@@ -147,6 +147,7 @@
     <ClCompile Include="Src\Components\AnimationComponent.cpp" />
     <ClCompile Include="Src\Components\BoundaryComponent.cpp" />
     <ClCompile Include="Src\Components\ColliderComponent.cpp" />
+    <ClCompile Include="Src\Components\ItemComponent.cpp" />
     <ClCompile Include="Src\Components\SpriteComponent.cpp" />
     <ClCompile Include="Src\Components\TileMapComponent.cpp" />
     <ClCompile Include="Src\Components\TransformComponent.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Src\Managers\InputManager.cpp" />
     <ClCompile Include="Src\Managers\TextureManager.cpp" />
     <ClCompile Include="Src\Systems\CollisionSystem.cpp" />
+    <ClCompile Include="Src\Systems\ItemSystem.cpp" />
     <ClCompile Include="Src\Systems\MovementSystem.cpp" />
     <ClCompile Include="Src\Systems\SpriteSystem.cpp" />
     <ClCompile Include="Src\Systems\TileMapSystem.cpp" />
@@ -168,14 +170,17 @@
     <ClInclude Include="Src\Components\BoundaryComponent.h" />
     <ClInclude Include="Src\Components\ColliderComponent.h" />
     <ClInclude Include="Src\Components\Components.h" />
+    <ClInclude Include="Src\Components\ItemComponent.h" />
     <ClInclude Include="Src\Components\SpriteComponent.h" />
     <ClInclude Include="Src\Components\TileMapComponent.h" />
     <ClInclude Include="Src\Components\TransformComponent.h" />
     <ClInclude Include="Src\Game.h" />
     <ClInclude Include="Src\Managers\CameraManager.h" />
     <ClInclude Include="Src\Managers\InputManager.h" />
+    <ClInclude Include="Src\Managers\Managers.h" />
     <ClInclude Include="Src\Managers\TextureManager.h" />
     <ClInclude Include="Src\Systems\CollisionSystem.h" />
+    <ClInclude Include="Src\Systems\ItemSystem.h" />
     <ClInclude Include="Src\Systems\Systems.h" />
     <ClInclude Include="Src\Systems\MovementSystem.h" />
     <ClInclude Include="Src\Systems\SpriteSystem.h" />

@@ -143,7 +143,7 @@ namespace lecs
 	inline uint32_t GetComponentTypeID()
 	{
 		static uint32_t id = next_component_id++;
-
+		
 		if (id > MAX_COMPONENT) logger.AddLog
 		(
 			"Error: new component id for Component " + std::string(typeid(T).name()) + " exceed MAX_COMPONENT",

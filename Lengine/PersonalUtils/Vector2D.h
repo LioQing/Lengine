@@ -327,6 +327,12 @@ public:
 	{
 		return sf::Vector2f(x, y);
 	}
+
+	template <typename T, typename TArg>
+	static Vec2<T> ToVector2D(const sf::Vector2<TArg> sfv)
+	{
+		return Vec2<T>(sfv.x, sfv.y);
+	}
 };
 
 typedef Vec2<double> Vector2D;

@@ -4,3 +4,4 @@
 #include "SpriteSystem.h"
 #include "TileMapSystem.h"
 #include "CollisionSystem.h"
+#include "ItemSystem.h"
