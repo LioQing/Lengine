@@ -7,6 +7,8 @@
 
 extern Game* game;
 
+// to do: add data file to directly load properties of components of entities
+
 namespace spawn
 {
 	lecs::Entity* Map()
@@ -24,9 +26,22 @@ namespace spawn
 		lecs::Entity* item = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &item->AddComponent<SpriteComponent>("glock");
 		TransformComponent* transform = &item->AddComponent<TransformComponent>(Vector2Df(400, 320), sprite->sprite.getTextureRect().width,
-			sprite->sprite.getTextureRect().height, Vector2Df(3.f, 3.f));
+			sprite->sprite.getTextureRect().height, game->world_scale);
 
 		return item;
+	}
+
+	lecs::Entity* Projectile(Vector2Df position, float speed, float angle = 0.f) // temporary for testing
+	{
+		lecs::Entity* projectile = &game->ecs_managers.entity_manager->AddEntity();
+		SpriteComponent* sprite = &projectile->AddComponent<SpriteComponent>("bullet");
+		sprite->sprite.setRotation(angle);
+		TransformComponent* transform = &projectile->AddComponent<TransformComponent>(position, sprite->sprite.getTextureRect().width,
+			sprite->sprite.getTextureRect().height, game->world_scale);
+		transform->speed = speed;
+		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle);
+
+		return projectile;
 	}
 
 	lecs::Entity* Player()

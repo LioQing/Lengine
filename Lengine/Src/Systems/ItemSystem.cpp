@@ -5,7 +5,7 @@
 
 extern Game* game;
 
-void ItemSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
+void ItemSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
 	for (auto& e : entity_manager->EntityFilter<ItemComponent>().entities)
 	{

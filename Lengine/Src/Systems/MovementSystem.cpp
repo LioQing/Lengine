@@ -69,6 +69,14 @@ void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Even
 		{
 			transform->scale.x = fabsf(transform->scale.x);
 		}
+	}
+}
+
+void MovementSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
+{
+	for (auto& e : entity_manager->EntityFilter<TransformComponent>().entities)
+	{
+		TransformComponent* transform = &e->GetComponent<TransformComponent>();
 
 		transform->position += transform->velocity * transform->speed;
 	}

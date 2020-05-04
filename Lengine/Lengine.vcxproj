@@ -148,6 +148,7 @@
     <ClCompile Include="Src\Components\BoundaryComponent.cpp" />
     <ClCompile Include="Src\Components\ColliderComponent.cpp" />
     <ClCompile Include="Src\Components\ItemComponent.cpp" />
+    <ClCompile Include="Src\Components\ProjectileComponent.cpp" />
     <ClCompile Include="Src\Components\SpriteComponent.cpp" />
     <ClCompile Include="Src\Components\TileMapComponent.cpp" />
     <ClCompile Include="Src\Components\TransformComponent.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="Src\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Src\Systems\ItemSystem.cpp" />
     <ClCompile Include="Src\Systems\MovementSystem.cpp" />
+    <ClCompile Include="Src\Systems\ProjectileSystem.cpp" />
     <ClCompile Include="Src\Systems\SpriteSystem.cpp" />
     <ClCompile Include="Src\Systems\TileMapSystem.cpp" />
   </ItemGroup>
@@ -171,6 +173,7 @@
     <ClInclude Include="Src\Components\ColliderComponent.h" />
     <ClInclude Include="Src\Components\Components.h" />
     <ClInclude Include="Src\Components\ItemComponent.h" />
+    <ClInclude Include="Src\Components\ProjectileComponent.h" />
     <ClInclude Include="Src\Components\SpriteComponent.h" />
     <ClInclude Include="Src\Components\TileMapComponent.h" />
     <ClInclude Include="Src\Components\TransformComponent.h" />
@@ -182,6 +185,7 @@
     <ClInclude Include="Src\SpawnEntity.h" />
     <ClInclude Include="Src\Systems\CollisionSystem.h" />
     <ClInclude Include="Src\Systems\ItemSystem.h" />
+    <ClInclude Include="Src\Systems\ProjectileSystem.h" />
     <ClInclude Include="Src\Systems\Systems.h" />
     <ClInclude Include="Src\Systems\MovementSystem.h" />
     <ClInclude Include="Src\Systems\SpriteSystem.h" />

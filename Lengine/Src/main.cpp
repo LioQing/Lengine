@@ -1,7 +1,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
+#include "Components/Components.h"
+#include <lecs.h>
 #include "Game.h"
 
 Game* game;

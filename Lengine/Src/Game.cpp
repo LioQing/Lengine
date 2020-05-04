@@ -20,11 +20,14 @@ void Game::Init()
 	ecs_managers.system_manager->AddSystem<SpriteSystem>();
 	ecs_managers.system_manager->AddSystem<CollisionSystem>();
 	ecs_managers.system_manager->AddSystem<ItemSystem>();
+	ecs_managers.system_manager->AddSystem<ProjectileSystem>();
 
-	lecs::GetComponentTypeID<ItemComponent>(); // strange bug in lecs... have to fix it like this
+	lecs::Component::GetComponentTypeID<ItemComponent>(); // strange bug in lecs... have to fix it like this
 
 	lecs::Entity* map = spawn::Map();
 	lecs::Entity* player = spawn::Player();
+
+	lecs::Entity* projectile = spawn::Projectile(Vector2Df(400.f, 320.f), 5.f);
 
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
 }
@@ -43,6 +46,9 @@ void Game::HandleInput(DeltaTime dt)
 
 void Game::Update(DeltaTime dt)
 {
+	ecs_managers.system_manager->GetSystem<MovementSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
+	ecs_managers.system_manager->GetSystem<ItemSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
+	ecs_managers.system_manager->GetSystem<ProjectileSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 	ecs_managers.system_manager->GetSystem<CollisionSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 
 	ecs_managers.UpdateECSManagers(dt);
