@@ -44,7 +44,18 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 			sf::IntRect srcRect;
 			srcRect.width = transform->width;
 			srcRect.height = transform->height;
-			srcRect.left = srcRect.width * (static_cast<int>(animation->timer / animation->current.delay) % animation->current.frame);
+			if (animation->current.delay != 0)
+			{
+				srcRect.left = srcRect.width * (static_cast<int>(animation->timer / animation->current.delay) % animation->current.frame);
+			}
+			else
+			{
+				game->logger->AddLog
+				(
+					"Error: Animation Component current animation delay is 0, cannot divide by 0",
+					lecs::LT_ERROR, lecs::LT_COMPONENT
+				);
+			}
 			srcRect.top = animation->current.index * transform->height;
 
 			sprite->sprite.setTextureRect(srcRect);

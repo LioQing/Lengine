@@ -60,10 +60,10 @@
     <ClCompile Include="Src\Managers\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Components\ItemComponent.cpp">
+    <ClCompile Include="Src\Systems\ItemSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Systems\ItemSystem.cpp">
+    <ClCompile Include="Src\Components\ItemComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,10 +128,13 @@
     <ClInclude Include="Src\Managers\Managers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Systems\ItemSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Components\ItemComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Systems\ItemSystem.h">
+    <ClInclude Include="Src\SpawnEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Components/Components.h"
 #include "Systems/Systems.h"
+#include "SpawnEntity.h"
 
 Game::Game(sf::RenderWindow& window) : window(window)
 {
@@ -22,22 +23,10 @@ void Game::Init()
 
 	lecs::GetComponentTypeID<ItemComponent>(); // strange bug in lecs... have to fix it like this
 
-	lecs::Entity* map = &ecs_managers.entity_manager->AddEntity();
-	BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
-	TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", 32, 3);
-	tilemap->LoadMap("Assets/Island.csv", 20, 20);
+	lecs::Entity* map = spawn::Map();
+	lecs::Entity* player = spawn::Player();
 
-	lecs::Entity* player = &ecs_managers.entity_manager->AddEntity();
-	ItemComponent* item = &player->AddComponent<ItemComponent>("glock", 32.f, true, true);
-	SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
-	TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.f, 3.f), 2.4f);
-	ColliderComponent* collider = &player->AddComponent<ColliderComponent>(96, 48, true, true);
-	AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
-	animation->AddAnimation("idle", 0, 2, 300);
-	animation->AddAnimation("walk", 1, 8, 100);
-	ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_PLAYER);
-
-	camera_manager.SetFollow(&transform->position);
+	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
 }
 
 void Game::HandleInput(DeltaTime dt)

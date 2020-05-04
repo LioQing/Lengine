@@ -39,7 +39,8 @@ void ItemSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* e
 	{
 		ItemComponent* item = &e->GetComponent<ItemComponent>();
 
-		item->UpdateSprite();
+		if (e->HasGroup(lecs::GRP_PLAYER)) item->UpdateSprite(game->input_manager.world_mouse_pos - item->center);
+		else item->UpdateSprite();
 
 		window->draw(item->sprite);
 	}

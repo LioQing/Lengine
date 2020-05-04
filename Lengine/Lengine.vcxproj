@@ -179,6 +179,7 @@
     <ClInclude Include="Src\Managers\InputManager.h" />
     <ClInclude Include="Src\Managers\Managers.h" />
     <ClInclude Include="Src\Managers\TextureManager.h" />
+    <ClInclude Include="Src\SpawnEntity.h" />
     <ClInclude Include="Src\Systems\CollisionSystem.h" />
     <ClInclude Include="Src\Systems\ItemSystem.h" />
     <ClInclude Include="Src\Systems\Systems.h" />

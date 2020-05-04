@@ -22,5 +22,5 @@ struct ItemComponent : public lecs::Component
 	ItemComponent(std::string texture_id, Vector2Df center, float radius, Vector2Df scale);
 
 	void SetSprite(std::string texture_id);
-	void UpdateSprite();
+	void UpdateSprite(Vector2Df position = Vector2Df::Right());
 };
