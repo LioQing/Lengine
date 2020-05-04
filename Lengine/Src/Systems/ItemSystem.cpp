@@ -27,13 +27,12 @@ void ItemSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::EventMan
 				TransformComponent* transform = &e->GetComponent<TransformComponent>();
 
 				if (item->follow_transform) item->center = transform->position;
-				if (item->scale_transform) item->scale = transform->scale.Abs();
 			}
 		}
 	}
 }
 
-void ItemSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
+void ItemSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
 	for (auto& e : entity_manager->EntityFilter<ItemComponent>().entities)
 	{
@@ -41,7 +40,5 @@ void ItemSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* e
 
 		if (e->HasGroup(lecs::GRP_PLAYER)) item->UpdateSprite(game->input_manager.world_mouse_pos - item->center);
 		else item->UpdateSprite();
-
-		window->draw(item->sprite);
 	}
 }

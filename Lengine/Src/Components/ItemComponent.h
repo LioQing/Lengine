@@ -6,21 +6,19 @@
 
 struct ItemComponent : public lecs::Component
 {
-	sf::Sprite sprite;
+	lecs::Entity* item;
 
 	Vector2Df center;
-	Vector2Df scale;
 	float radius;
 
 	bool follow_transform;
 	bool scale_transform;
 
-	ItemComponent(std::string texture_id, bool follow_transform, bool scale_transform);
-	ItemComponent(std::string texture_id, float radius, bool follow_transform, bool scale_transform);
-	ItemComponent(std::string texture_id, Vector2Df center, float radius, bool scale_transform);
-	ItemComponent(std::string texture_id, float radius, Vector2Df scale, bool follow_transform);
-	ItemComponent(std::string texture_id, Vector2Df center, float radius, Vector2Df scale);
+	ItemComponent(lecs::Entity* item, bool follow_transform);
+	ItemComponent(lecs::Entity* item, float radius, bool follow_transform);
+	ItemComponent(lecs::Entity* item, Vector2Df center, float radius);
 
-	void SetSprite(std::string texture_id);
+	void SetItem(lecs::Entity* item);
+
 	void UpdateSprite(Vector2Df position = Vector2Df::Right());
 };

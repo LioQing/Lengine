@@ -19,10 +19,20 @@ namespace spawn
 		return map;
 	}
 
+	lecs::Entity* Weapon()
+	{
+		lecs::Entity* item = &game->ecs_managers.entity_manager->AddEntity();
+		SpriteComponent* sprite = &item->AddComponent<SpriteComponent>("glock");
+		TransformComponent* transform = &item->AddComponent<TransformComponent>(Vector2Df(400, 320), sprite->sprite.getTextureRect().width,
+			sprite->sprite.getTextureRect().height, Vector2Df(3.f, 3.f));
+
+		return item;
+	}
+
 	lecs::Entity* Player()
 	{
 		lecs::Entity* player = &game->ecs_managers.entity_manager->AddEntity();
-		ItemComponent* item = &player->AddComponent<ItemComponent>("glock", 32.f, true, true);
+		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.f, 3.f), 2.4f);
 		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(96, 48, true, true);
