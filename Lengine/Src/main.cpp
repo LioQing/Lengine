@@ -1,14 +1,28 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <thread>
+
 #include "Components/Components.h"
-#include <lecs.h>
 #include "Game.h"
 
 Game* game;
 
+void Rendering(sf::RenderWindow* window)
+{
+    window->setActive(true);
+
+    while (window->isOpen())
+    {
+        window->clear();
+        game->Render();
+        window->display();
+    }
+}
+
 int main()
 {
+
     DeltaTime delta_time = 0u;
     sf::Clock delta_clock;
 
@@ -18,18 +32,19 @@ int main()
     game = new Game(window);
     game->Init();
 
+    window.setActive(false);
+    std::thread render_thread(Rendering, &window);
+
     while (window.isOpen())
     {
         game->HandleInput(delta_time);
         game->Update(delta_time);
-        //if (delta_time != 0)std::cout << 1000/delta_time << std::endl;
-
-        window.clear();
-        game->Render();
-        window.display();
+        //if (delta_time != 0)std::cout << delta_time << std::endl;
 
         delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
     }
+
+    render_thread.join();
 
     return 0;
 }

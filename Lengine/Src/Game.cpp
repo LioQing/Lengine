@@ -27,7 +27,7 @@ void Game::Init()
 	lecs::Entity* map = spawn::Map();
 	lecs::Entity* player = spawn::Player();
 
-	lecs::Entity* projectile = spawn::Projectile(Vector2Df(400.f, 320.f), 5.f);
+	lecs::Entity* projectile = spawn::Projectile(Vector2Df(400.f, 320.f), 1.f);
 
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
 }
