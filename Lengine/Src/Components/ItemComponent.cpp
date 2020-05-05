@@ -31,7 +31,7 @@ void ItemComponent::SetItem(lecs::Entity* item)
 	this->item = item;
 }
 
-void ItemComponent::UpdateSprite(Vector2Df position)
+void ItemComponent::RenderSprite(Vector2Df position)
 {
 	float rad = atan2f(position.y, position.x);
 	item->GetComponent<TransformComponent>().position = center + Vector2Df(radius * cosf(rad), radius * sinf(rad));

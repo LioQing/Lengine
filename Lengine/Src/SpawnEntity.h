@@ -11,7 +11,7 @@ extern Game* game;
 
 namespace spawn
 {
-	lecs::Entity* Map()
+	inline lecs::Entity* Map()
 	{
 		lecs::Entity* map = &game->ecs_managers.entity_manager->AddEntity();
 		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
@@ -21,17 +21,24 @@ namespace spawn
 		return map;
 	}
 
-	lecs::Entity* Weapon()
+	inline lecs::Entity* Weapon()
 	{
 		lecs::Entity* item = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &item->AddComponent<SpriteComponent>("glock");
 		TransformComponent* transform = &item->AddComponent<TransformComponent>(Vector2Df(400, 320), sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game->world_scale);
+		GunComponent* gun = &item->AddComponent<GunComponent>(
+			Vector2Df
+			(
+				sprite->sprite.getTextureRect().width * game->world_scale.x, 
+				sprite->sprite.getTextureRect().height * game->world_scale.y / 2 - 3
+			),
+			150.f);
 
 		return item;
 	}
 
-	lecs::Entity* Projectile(Vector2Df position, float speed, float angle = 0.f) // temporary for testing
+	inline lecs::Entity* Projectile(Vector2Df position, float speed, float decay, float angle = 0.f) // temporary for testing
 	{
 		lecs::Entity* projectile = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &projectile->AddComponent<SpriteComponent>("bullet");
@@ -39,12 +46,13 @@ namespace spawn
 		TransformComponent* transform = &projectile->AddComponent<TransformComponent>(position, sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game->world_scale);
 		transform->speed = speed;
-		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle);
+		if (angle > 90 && angle < 270 || angle < -90 && angle > -270) transform->scale.y = fabsf(transform->scale.y) * -1;
+		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle, decay);
 
 		return projectile;
 	}
 
-	lecs::Entity* Player()
+	inline lecs::Entity* Player()
 	{
 		lecs::Entity* player = &game->ecs_managers.entity_manager->AddEntity();
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);

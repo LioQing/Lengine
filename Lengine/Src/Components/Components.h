@@ -8,3 +8,4 @@
 #include "BoundaryComponent.h"
 #include "ItemComponent.h"
 #include "ProjectileComponent.h"
+#include "Items/GunComponent.h""

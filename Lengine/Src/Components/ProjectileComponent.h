@@ -6,5 +6,8 @@ struct ProjectileComponent : public lecs::Component
 {
 	float rotation;
 
-	ProjectileComponent(float rotation);
+	float decay;
+	float decay_timer = 0.f;
+
+	ProjectileComponent(float rotation, float decay);
 };

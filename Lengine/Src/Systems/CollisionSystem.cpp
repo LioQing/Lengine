@@ -50,7 +50,7 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 
 	for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
 	{
-		for (auto boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
+		for (auto& boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
 		{
 			if (boundary_col == nullptr) continue;
 			boundary_col->UpdateBox();

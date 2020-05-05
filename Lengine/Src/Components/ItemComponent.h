@@ -20,5 +20,5 @@ struct ItemComponent : public lecs::Component
 
 	void SetItem(lecs::Entity* item);
 
-	void UpdateSprite(Vector2Df position = Vector2Df::Right());
+	void RenderSprite(Vector2Df position = Vector2Df::Right());
 };
