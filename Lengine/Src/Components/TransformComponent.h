@@ -12,6 +12,7 @@ struct TransformComponent : public lecs::Component
 
 	Vector2Df velocity;
 	float speed;
+	float x_speed = 0.f;
 
 	TransformComponent(Vector2Df position, uint32_t width, uint32_t height);
 	TransformComponent(Vector2Df position, uint32_t width, uint32_t height, Vector2Df scale);

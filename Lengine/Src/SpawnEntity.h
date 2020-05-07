@@ -35,7 +35,7 @@ namespace spawn
 				sprite->sprite.getTextureRect().width * game->world_scale.x, 
 				sprite->sprite.getTextureRect().height * game->world_scale.y / 2 - 3
 			),
-			150.f);
+			65.f);
 
 		return item;
 	}

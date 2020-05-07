@@ -39,6 +39,16 @@ void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Even
 			transform->velocity.x = 0;
 		}
 
+		// running
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		{
+			transform->x_speed = 3.f;
+		}
+		else
+		{
+			transform->x_speed = 0.f;
+		}
+
 		// diagonal movement
 		if (transform->velocity.Magnitude() > 1)
 		{
@@ -78,7 +88,7 @@ void MovementSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::Even
 	{
 		TransformComponent* transform = &e->GetComponent<TransformComponent>();
 
-		transform->position += transform->velocity * transform->speed * delta_time * 6 / 100;
+		transform->position += transform->velocity * (transform->speed + transform->x_speed) * delta_time * 6 / 100;
 	}
 }
 
