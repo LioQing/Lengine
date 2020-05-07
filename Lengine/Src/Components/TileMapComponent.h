@@ -4,6 +4,7 @@
 #include <lecs.h>
 #include <Vector2D.h>
 #include <vector>
+#include <Matrix.h>
 
 struct TileMapComponent : public lecs::Component
 {
@@ -16,4 +17,7 @@ struct TileMapComponent : public lecs::Component
 
 	void SetTileSet(std::string texture_id, uint32_t tile_size, float scale);
 	void LoadMap(const char* csv_path, uint32_t size_x, uint32_t size_y);
+	void LoadMap(Matrixi map);
+
+	void AddTile(int x, int y, int src_x, int src_y, sf::Sprite* tile);
 };

@@ -31,11 +31,32 @@ void TileMapComponent::LoadMap(const char* csv_path, uint32_t size_x, uint32_t s
 			int src_y = (csvr.GetValue<int>(y, x) / 10) * tile_size;
 
 			sf::Sprite* tile = &tiles[x + y * size_x];
-
-			tile->setPosition(x * tile_size * scale, y * tile_size * scale);
-			tile->setScale(scale + 0.005f, scale + 0.005f); // I hate this fix...
-			tile->setTexture(game->texture_manager.GetTexture(texture_id));
-			tile->setTextureRect(sf::IntRect(src_x, src_y, tile_size, tile_size));
+			AddTile(x, y, src_x, src_y, tile);
 		}
 	}
+}
+
+void TileMapComponent::LoadMap(Matrixi map)
+{
+	tiles.resize(map.width * map.height);
+
+	for (int y = 0; y < map.height; ++y)
+	{
+		for (int x = 0; x < map.width; ++x)
+		{
+			int src_x = (map.At(x, y) % 10) * tile_size;
+			int src_y = (map.At(x, y) / 10) * tile_size;
+
+			sf::Sprite* tile = &tiles[x + y * map.height];
+			AddTile(x, y, src_x, src_y, tile);
+		}
+	}
+}
+
+void TileMapComponent::AddTile(int x, int y, int src_x, int src_y, sf::Sprite* tile)
+{
+	tile->setPosition(x * tile_size * scale, y * tile_size * scale);
+	tile->setScale(scale + 0.005f, scale + 0.005f); // I hate this fix...
+	tile->setTexture(game->texture_manager.GetTexture(texture_id));
+	tile->setTextureRect(sf::IntRect(src_x, src_y, tile_size, tile_size));
 }

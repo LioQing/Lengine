@@ -14,9 +14,11 @@ namespace spawn
 	inline lecs::Entity* Map()
 	{
 		lecs::Entity* map = &game->ecs_managers.entity_manager->AddEntity();
-		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
+		//BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
 		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", 32, 3);
-		tilemap->LoadMap("Assets/Island.csv", 20, 20);
+		LevelComponent* level = &map->AddComponent<LevelComponent>(13);
+		level->GenMap(8, 50, 5, 10, 4);
+		tilemap->LoadMap(level->map);
 
 		return map;
 	}

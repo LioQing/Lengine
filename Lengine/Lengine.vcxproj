@@ -149,6 +149,7 @@
     <ClCompile Include="Src\Components\ColliderComponent.cpp" />
     <ClCompile Include="Src\Components\ItemComponent.cpp" />
     <ClCompile Include="Src\Components\Items\GunComponent.cpp" />
+    <ClCompile Include="Src\Components\LevelComponent.cpp" />
     <ClCompile Include="Src\Components\ProjectileComponent.cpp" />
     <ClCompile Include="Src\Components\SpriteComponent.cpp" />
     <ClCompile Include="Src\Components\TileMapComponent.cpp" />
@@ -168,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="PersonalUtils\CSVReader.h" />
     <ClInclude Include="PersonalUtils\lecs.h" />
+    <ClInclude Include="PersonalUtils\Matrix.h" />
     <ClInclude Include="PersonalUtils\Vector2D.h" />
     <ClInclude Include="Src\Components\AnimationComponent.h" />
     <ClInclude Include="Src\Components\BoundaryComponent.h" />
@@ -175,6 +177,7 @@
     <ClInclude Include="Src\Components\Components.h" />
     <ClInclude Include="Src\Components\ItemComponent.h" />
     <ClInclude Include="Src\Components\Items\GunComponent.h" />
+    <ClInclude Include="Src\Components\LevelComponent.h" />
     <ClInclude Include="Src\Components\ProjectileComponent.h" />
     <ClInclude Include="Src\Components\SpriteComponent.h" />
     <ClInclude Include="Src\Components\TileMapComponent.h" />
