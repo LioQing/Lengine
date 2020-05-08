@@ -15,9 +15,9 @@ namespace spawn
 	{
 		lecs::Entity* map = &game->ecs_managers.entity_manager->AddEntity();
 		//BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
-		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", 32, 3);
-		LevelComponent* level = &map->AddComponent<LevelComponent>(13);
-		level->GenMap(8, 50, 5, 10, 4);
+		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", 32, game->world_scale.x);
+		LevelComponent* level = &map->AddComponent<LevelComponent>(-1);
+		level->GenMap(8, 50, 5, 10, 4, 13, 1);
 		tilemap->LoadMap(level->map);
 
 		return map;
@@ -59,7 +59,7 @@ namespace spawn
 		lecs::Entity* player = &game->ecs_managers.entity_manager->AddEntity();
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
-		TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.f, 3.f), 2.4f);
+		TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.f, 3.f), 4.f);
 		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(96, 48, true, true);
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);

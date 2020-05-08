@@ -44,6 +44,7 @@ void TileMapComponent::LoadMap(Matrixi map)
 	{
 		for (int x = 0; x < map.width; ++x)
 		{
+			if (map.At(x, y) == -1) continue;
 			int src_x = (map.At(x, y) % 10) * tile_size;
 			int src_y = (map.At(x, y) / 10) * tile_size;
 

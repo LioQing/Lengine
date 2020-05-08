@@ -42,7 +42,7 @@ void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Even
 		// running
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 		{
-			transform->x_speed = 3.f;
+			transform->x_speed = 2.f;
 		}
 		else
 		{
