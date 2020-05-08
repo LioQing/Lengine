@@ -17,7 +17,7 @@ namespace spawn
 		//BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
 		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", 32, game->world_scale.x);
 		LevelComponent* level = &map->AddComponent<LevelComponent>(-1);
-		level->GenMap(8, 50, 5, 10, 4, 13, 1);
+		level->GenMap(8, 50, 5, 10, 0, 2, 1);
 		tilemap->LoadMap(level->map);
 
 		return map;

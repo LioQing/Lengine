@@ -129,7 +129,18 @@ void LevelComponent::BuildWall(int floor_i, int null_i, int wall_i, int side_wal
 			if (h != map.height - 1 && map.At(w, h + 1) == floor_i)
 			{
 				map.At(w, h) = side_wall_i;
-				if (h != 0) map.At(w, h - 1) = wall_i;
+				if (h != 0)
+				{
+					if (map.At(w, h - 1) == floor_i && (h - 1 == 0 || map.At(w, h - 2) == wall_i || map.At(w, h - 2) == side_wall_i))
+					{
+						map.At(w, h) = floor_i;
+						map.At(w, h - 1) = floor_i;
+					}
+					else
+					{
+						map.At(w, h - 1) = wall_i;
+					}
+				}
 
 				if (w != 0 && map.At(w - 1, h - 1) == null_i) map.At(w - 1, h - 1) = wall_i;
 				if (w != map.width - 1 && map.At(w + 1, h - 1) == null_i) map.At(w + 1, h - 1) = wall_i;
