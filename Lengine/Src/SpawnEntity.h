@@ -13,12 +13,18 @@ namespace spawn
 {
 	inline lecs::Entity* Map()
 	{
+		int map_size = 50;
+		int floor_i = 0;
+		int wall_i = 2;
+		int side_wall_i = 1;
+		int tile_size = 32;
+
 		lecs::Entity* map = &game->ecs_managers.entity_manager->AddEntity();
-		//BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>("Assets/Boundary.csv", 20, 20, 96);
-		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", 32, game->world_scale.x);
+		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", tile_size, game->world_scale.x);
 		LevelComponent* level = &map->AddComponent<LevelComponent>(-1);
-		level->GenMap(8, 50, 5, 10, 0, 2, 1);
+		level->GenMap(8, map_size, 5, 10, floor_i, wall_i, side_wall_i);
 		tilemap->LoadMap(level->map);
+		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x);
 
 		return map;
 	}
@@ -54,12 +60,12 @@ namespace spawn
 		return projectile;
 	}
 
-	inline lecs::Entity* Player()
+	inline lecs::Entity* Player(Vector2Df position)
 	{
 		lecs::Entity* player = &game->ecs_managers.entity_manager->AddEntity();
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
-		TransformComponent* transform = &player->AddComponent<TransformComponent>(Vector2Df(400, 320), 32, 32, Vector2Df(3.f, 3.f), 4.f);
+		TransformComponent* transform = &player->AddComponent<TransformComponent>(position, 32, 32, Vector2Df(3.f, 3.f), 4.f);
 		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(96, 48, true, true);
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);

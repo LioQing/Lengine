@@ -3,6 +3,8 @@
 #include "Systems/Systems.h"
 #include "SpawnEntity.h"
 
+lecs::Entity* player;
+
 Game::Game(sf::RenderWindow& window) : window(window)
 {
 	camera_manager.SetWindow(&window);
@@ -23,7 +25,9 @@ void Game::Init()
 	ecs_managers.system_manager->AddSystem<ProjectileSystem>();
 
 	lecs::Entity* map = spawn::Map();
-	lecs::Entity* player = spawn::Player();
+	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
+
+	player = spawn::Player(spawn_pos);
 
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
 }
