@@ -1,8 +1,12 @@
 #include "CollisionSystem.h"
 
 #include <vector>
+#include <future>
+#include <ThreadPool.h>
 
 #include "../Game.h"
+
+ThreadPool col_tp(4);
 
 extern Game* game;
 
@@ -61,78 +65,88 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 
 void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
+	std::vector<std::future<void>> results;
 	for (auto& e1 : entity_manager->EntityFilter<ColliderComponent>().entities)
 	{
-		ColliderComponent* kinematic_col = &e1->GetComponent<ColliderComponent>();
-		if (!kinematic_col->isKinematic) continue;
-		
-		std::vector<ColliderComponent*> collided;
-		ColliderComponent tmp_resolved_col(*kinematic_col);
-		Vector2Df resolve(0.0f, 0.0f);
+		results.emplace_back(col_tp.enqueue(&CollisionSystem::SubUpdate, this, e1, entity_manager, event_manager, dt));
+	}
+	for (auto& r : results)
+	{
+		r.get();
+	}
+}
 
-		for (auto& e2 : entity_manager->EntityFilter<ColliderComponent>().entities)
+void CollisionSystem::SubUpdate(lecs::Entity* e1, lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
+{
+	ColliderComponent* kinematic_col = &e1->GetComponent<ColliderComponent>();
+	if (!kinematic_col->isKinematic) return;
+
+	std::vector<ColliderComponent*> collided;
+	ColliderComponent tmp_resolved_col(*kinematic_col);
+	Vector2Df resolve(0.0f, 0.0f);
+
+	for (auto& e2 : entity_manager->EntityFilter<ColliderComponent>().entities)
+	{
+		ColliderComponent* static_col = &e2->GetComponent<ColliderComponent>();
+		if (static_col->isKinematic) continue;
+
+		if (AABB(tmp_resolved_col, *static_col))
 		{
-			ColliderComponent* static_col = &e2->GetComponent<ColliderComponent>();
-			if (static_col->isKinematic) continue;
+			collided.emplace_back(static_col);
+			resolve = ApplyResolve(resolve, ResolveOverlap(tmp_resolved_col, *static_col));
 
-			if (AABB(tmp_resolved_col, *static_col))
+			tmp_resolved_col.position = kinematic_col->position + resolve;
+		}
+	}
+
+	for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
+	{
+		for (auto boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
+		{
+			if (boundary_col == nullptr) continue;
+
+			if (AABB(tmp_resolved_col, *boundary_col))
 			{
-				collided.emplace_back(static_col);
-				resolve = ApplyResolve(resolve, ResolveOverlap(tmp_resolved_col, *static_col));
+				collided.emplace_back(boundary_col);
+				resolve = ApplyResolve(resolve, ResolveOverlap(tmp_resolved_col, *boundary_col));
 
 				tmp_resolved_col.position = kinematic_col->position + resolve;
 			}
 		}
+	}
 
-		for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
+	tmp_resolved_col = *kinematic_col;
+	Vector2Df reverse_resolve(0.0f, 0.0f);
+	for (auto itr = collided.rbegin(); itr != collided.rend(); ++itr)
+	{
+		ColliderComponent* col = *itr;
+
+		if (AABB(tmp_resolved_col, *col))
 		{
-			for (auto boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
-			{
-				if (boundary_col == nullptr) continue;
+			reverse_resolve = ApplyResolve(reverse_resolve, ResolveOverlap(tmp_resolved_col, *col));
 
-				if (AABB(tmp_resolved_col, *boundary_col))
-				{
-					collided.emplace_back(boundary_col);
-					resolve = ApplyResolve(resolve, ResolveOverlap(tmp_resolved_col, *boundary_col));
-
-					tmp_resolved_col.position = kinematic_col->position + resolve;
-				}
-			}
+			tmp_resolved_col.position = kinematic_col->position + reverse_resolve;
 		}
+	}
 
-		tmp_resolved_col = *kinematic_col;
-		Vector2Df reverse_resolve(0.0f, 0.0f);
-		for (auto itr = collided.rbegin(); itr != collided.rend(); ++itr)
-		{
-			ColliderComponent* col = *itr;
+	if (!e1->HasComponent<TransformComponent>())
+	{
+		game->logger->AddLog
+		(
+			"Error: Entity " + std::to_string(e1->id) + " doesn't have Transform Component for collision resolve",
+			lecs::LT_ERROR, lecs::LT_ENTITY, lecs::LT_COMPONENT
+		);
+		return;
+	}
 
-			if (AABB(tmp_resolved_col, *col))
-			{
-				reverse_resolve = ApplyResolve(reverse_resolve, ResolveOverlap(tmp_resolved_col, *col));
+	TransformComponent* transform = &e1->GetComponent<TransformComponent>();
 
-				tmp_resolved_col.position = kinematic_col->position + reverse_resolve;
-			}
-		}
+	if (resolve.Magnitude() < reverse_resolve.Magnitude()) transform->position += resolve;
+	else transform->position += reverse_resolve;
 
-		if (!e1->HasComponent<TransformComponent>())
-		{
-			game->logger->AddLog
-			(
-				"Error: Entity " + std::to_string(e1->id) + " doesn't have Transform Component for collision resolve",
-				lecs::LT_ERROR, lecs::LT_ENTITY, lecs::LT_COMPONENT
-			);
-			continue;
-		}
-
-		TransformComponent* transform = &e1->GetComponent<TransformComponent>();
-
-		if (resolve.Magnitude() < reverse_resolve.Magnitude()) transform->position += resolve;
-		else transform->position += reverse_resolve;
-
-		if (kinematic_col->followTransform)
-		{
-			kinematic_col->position = transform->position;
-		}
+	if (kinematic_col->followTransform)
+	{
+		kinematic_col->position = transform->position;
 	}
 }
 

@@ -14,8 +14,11 @@ std::mutex m;
 std::condition_variable cv;
 bool rendering = false;
 
-void Rendering(sf::RenderWindow* window)
+void Rendering(sf::RenderWindow* window, int fps)
 {
+    float delay_time = static_cast<float>(1000) / fps;
+    float delta_time = 0.f;
+    sf::Clock delta_clock;
     window->setActive(true);
 
     while (window->isOpen())
@@ -31,6 +34,13 @@ void Rendering(sf::RenderWindow* window)
         cv.notify_one();
 
         window->display();
+
+        delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
+        if (delta_time < delay_time)
+        {
+            sf::sleep(sf::microseconds(fps - 1000 * delta_time));
+        }
+        delta_clock.restart();
     }
 }
 
@@ -40,13 +50,13 @@ int main()
     sf::Clock delta_clock;
 
     sf::RenderWindow window(sf::VideoMode(800, 640), "Lengine");
-    window.setFramerateLimit(60);
+    int fps = 60;
 
     game = new Game(window);
     game->Init();
 
     window.setActive(false);
-    std::thread render_thread(Rendering, &window);
+    std::thread render_thread(Rendering, &window, fps);
 
     while (window.isOpen())
     {
@@ -56,6 +66,8 @@ int main()
         game->HandleInput(delta_time);
         game->Update(delta_time);
         //if (delta_time != 0)std::cout << delta_time << std::endl;
+
+        sf::sleep(sf::microseconds(1));
 
         delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
     }
