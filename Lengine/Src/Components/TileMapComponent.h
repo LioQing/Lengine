@@ -9,9 +9,11 @@
 struct TileMapComponent : public lecs::Component
 {
 	std::vector<sf::Sprite> tiles;
+	std::vector<sf::Sprite> top_layer_tiles;
 	std::string texture_id;
 	float scale;
 	uint32_t tile_size;
+	int top_layer_i;
 
 	TileMapComponent(std::string texture_id, uint32_t tile_size, float scale);
 

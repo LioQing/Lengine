@@ -21,6 +21,7 @@ void TileMapComponent::SetTileSet(std::string texture_id, uint32_t tile_size, fl
 void TileMapComponent::LoadMap(const char* csv_path, uint32_t size_x, uint32_t size_y)
 {
 	tiles.resize(size_x * size_y);
+	top_layer_tiles.resize(size_x * size_y);
 	CSVReader csvr = CSVReader(csv_path, size_y, size_x);
 
 	for (int y = 0; y < size_y; ++y)
@@ -30,7 +31,9 @@ void TileMapComponent::LoadMap(const char* csv_path, uint32_t size_x, uint32_t s
 			int src_x = (csvr.GetValue<int>(y, x) % 10) * tile_size;
 			int src_y = (csvr.GetValue<int>(y, x) / 10) * tile_size;
 
-			sf::Sprite* tile = &tiles[x + y * size_x];
+			sf::Sprite* tile;
+			if (csvr.GetValue<int>(y, x) == top_layer_i) tile = &top_layer_tiles[x + y * size_x];
+			else tile = &tiles[x + y * size_x];
 			AddTile(x, y, src_x, src_y, tile);
 		}
 	}
@@ -39,6 +42,7 @@ void TileMapComponent::LoadMap(const char* csv_path, uint32_t size_x, uint32_t s
 void TileMapComponent::LoadMap(Matrixi map)
 {
 	tiles.resize(map.width * map.height);
+	top_layer_tiles.resize(map.width * map.height);
 
 	for (int y = 0; y < map.height; ++y)
 	{
@@ -48,7 +52,9 @@ void TileMapComponent::LoadMap(Matrixi map)
 			int src_x = (map.At(x, y) % 10) * tile_size;
 			int src_y = (map.At(x, y) / 10) * tile_size;
 
-			sf::Sprite* tile = &tiles[x + y * map.height];
+			sf::Sprite* tile;
+			if (map.At(x, y) == top_layer_i) tile = &top_layer_tiles[x + y * map.width];
+			else tile = &tiles[x + y * map.width];
 			AddTile(x, y, src_x, src_y, tile);
 		}
 	}

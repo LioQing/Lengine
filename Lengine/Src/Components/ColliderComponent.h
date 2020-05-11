@@ -9,6 +9,7 @@ struct ColliderComponent : public lecs::Component
 {
 	sf::RectangleShape box;
 
+	Vector2Df offset;
 	Vector2Df position;
 	int height;
 	int width;
@@ -21,6 +22,9 @@ struct ColliderComponent : public lecs::Component
 	ColliderComponent(Vector2Df position, uint32_t height, uint32_t width, bool isKinematic);
 	ColliderComponent(uint32_t height, uint32_t width, bool followTransform, bool isKinematic);
 	ColliderComponent(bool fitTransform, bool followTransform, bool isKinematic);
+
+	void SetOffset(Vector2Df offset);
+	void SetPosition(Vector2Df pos);
 
 	void UpdateBox();
 };

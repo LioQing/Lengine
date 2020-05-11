@@ -24,11 +24,21 @@ ColliderComponent::ColliderComponent(bool fitTransform, bool followTransform, bo
 {
 }
 
+void ColliderComponent::SetOffset(Vector2Df offset)
+{
+	this->offset = offset;
+}
+
+void ColliderComponent::SetPosition(Vector2Df pos)
+{
+	position = pos + offset;
+}
+
 void ColliderComponent::UpdateBox()
 {
 	box.setOrigin(sf::Vector2f(width / 2 - 3, height / 2 - 3));
 	box.setSize(sf::Vector2f(width - 6, height - 6));
-	box.setPosition(position.sfVector2f());
+	box.setPosition((position + offset).sfVector2f());
 	box.setFillColor(sf::Color::Transparent);
 	box.setOutlineColor(sf::Color(0, 255, 0, 191));
 	box.setOutlineThickness(3);

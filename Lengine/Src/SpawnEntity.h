@@ -23,8 +23,9 @@ namespace spawn
 		TileMapComponent* tilemap = &map->AddComponent<TileMapComponent>("terrain", tile_size, game->world_scale.x);
 		LevelComponent* level = &map->AddComponent<LevelComponent>(-1);
 		level->GenMap(8, map_size, 5, 10, floor_i, wall_i, side_wall_i);
+		tilemap->top_layer_i = 2;
 		tilemap->LoadMap(level->map);
-		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x);
+		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x, Vector2Df(0.f ,16.f) * game->world_scale);
 
 		return map;
 	}
@@ -66,7 +67,8 @@ namespace spawn
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = &player->AddComponent<TransformComponent>(position, 32, 32, Vector2Df(3.f, 3.f), 4.f);
-		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(96, 48, true, true);
+		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(8 * game->world_scale.x, 16 * game->world_scale.y, true, true);
+		collider->SetOffset(Vector2Df(0.f, 4.f) * game->world_scale + Vector2Df(0.f, transform->height));
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
 		animation->AddAnimation("walk", 1, 8, 100);

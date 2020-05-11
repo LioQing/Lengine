@@ -1,12 +1,8 @@
 #include "CollisionSystem.h"
 
 #include <vector>
-#include <future>
-#include <ThreadPool.h>
 
 #include "../Game.h"
-
-ThreadPool col_tp(4);
 
 extern Game* game;
 
@@ -37,7 +33,7 @@ void CollisionSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::Eve
 			}
 			if (col->followTransform)
 			{
-				col->position = transform->position;
+				col->SetPosition(transform->position);
 			}
 		}
 	}
@@ -45,22 +41,22 @@ void CollisionSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::Eve
 
 void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {
-	for (auto& e : entity_manager->EntityFilter<ColliderComponent>().entities)
-	{
-		ColliderComponent* col = &e->GetComponent<ColliderComponent>();
-		col->UpdateBox();
-		window->draw(col->box);
-	}
+	//for (auto& e : entity_manager->EntityFilter<ColliderComponent>().entities)
+	//{
+	//	ColliderComponent* col = &e->GetComponent<ColliderComponent>();
+	//	col->UpdateBox();
+	//	window->draw(col->box);
+	//}
 
-	for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
-	{
-		for (auto& boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
-		{
-			if (boundary_col == nullptr) continue;
-			boundary_col->UpdateBox();
-			window->draw(boundary_col->box);
-		}
-	}
+	//for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
+	//{
+	//	for (auto& boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
+	//	{
+	//		if (boundary_col == nullptr) continue;
+	//		boundary_col->UpdateBox();
+	//		window->draw(boundary_col->box);
+	//	}
+	//}
 }
 
 void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
@@ -68,7 +64,7 @@ void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMan
 	std::vector<std::future<void>> results;
 	for (auto& e1 : entity_manager->EntityFilter<ColliderComponent>().entities)
 	{
-		results.emplace_back(col_tp.enqueue(&CollisionSystem::SubUpdate, this, e1, entity_manager, event_manager, dt));
+		results.emplace_back(game->tp.enqueue(&CollisionSystem::SubUpdate, this, e1, entity_manager, event_manager, dt));
 	}
 	for (auto& r : results)
 	{

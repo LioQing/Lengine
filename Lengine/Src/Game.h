@@ -2,7 +2,10 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <ThreadPool.h>
 #include <lecs.h>
+#include <vector>
+#include <future>
 
 #include "Managers/Managers.h"
 
@@ -15,6 +18,8 @@ private:
 
 public:
 
+	ThreadPool& tp;
+
 	Vector2Df world_scale = Vector2Df(3.f, 3.f);
 
 	lecs::ECSManagers ecs_managers;
@@ -24,7 +29,7 @@ public:
 	CameraManager camera_manager;
 	InputManager input_manager;
 
-	Game(sf::RenderWindow& window);
+	Game(sf::RenderWindow& window, ThreadPool& tp);
 
 	void Init();
 	void HandleInput(DeltaTime dt);
