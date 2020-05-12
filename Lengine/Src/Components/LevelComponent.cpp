@@ -2,6 +2,8 @@
 
 #include <time.h>
 
+#include "../SpawnEntity.h"
+
 LevelComponent::LevelComponent(int null_i)
 	: null_index(null_i)
 {
@@ -146,6 +148,29 @@ void LevelComponent::BuildWall(int floor_i, int null_i, int wall_i, int side_wal
 				if (w != map.width - 1 && map.At(w + 1, h - 1) == null_i) map.At(w + 1, h - 1) = wall_i;
 			}
 		}
+	}
+}
+
+void LevelComponent::GenStatics(int lower_num, int upper_num, int tile_size, lecs::EntityManager* entity_manager)
+{
+	for (auto& r : rooms)
+	{
+		int n = Random(lower_num, upper_num);
+
+		for (auto j = 0u; j < n; ++j)
+		{
+			Vector2Di position(Random(r.x, r.x + r.width - 1), Random(r.y, r.y + r.height - 1));
+
+			spawn::StaticObject(position.Cast<float>() * game->world_scale * tile_size, tile_size, statics.at(rand() % statics.size()));
+		}
+	}
+}
+
+void LevelComponent::SetStaticTextures(std::initializer_list<std::string> ids)
+{
+	for (auto& id : ids)
+	{
+		statics.emplace_back(id);
 	}
 }
 

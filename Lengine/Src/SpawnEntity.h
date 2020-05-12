@@ -11,6 +11,21 @@ extern Game* game;
 
 namespace spawn
 {
+	inline lecs::Entity* StaticObject(Vector2Df position, int tile_size, std::string texture_id)
+	{
+		lecs::Entity* static_obj = &game->ecs_managers.entity_manager->AddEntity();
+		SpriteComponent* sprite = &static_obj->AddComponent<SpriteComponent>(
+			texture_id,
+			Vector2Df(0.f, game->texture_manager.GetTexture(texture_id).getSize().y - tile_size)
+			);
+		TransformComponent* transform = &static_obj->AddComponent<TransformComponent>(position,
+			sprite->sprite.getTextureRect().width,
+			sprite->sprite.getTextureRect().height,
+			game->world_scale);
+
+		return static_obj;
+	}
+
 	inline lecs::Entity* Map()
 	{
 		int map_size = 50;
@@ -25,6 +40,8 @@ namespace spawn
 		level->GenMap(8, map_size, 5, 10, floor_i, wall_i, side_wall_i);
 		tilemap->top_layer_i = 2;
 		tilemap->LoadMap(level->map);
+		level->SetStaticTextures({ "crate", "d_crate" });
+		level->GenStatics(5, 8, 32, game->ecs_managers.entity_manager);
 		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x, Vector2Df(0.f ,16.f) * game->world_scale);
 
 		return map;

@@ -8,6 +8,8 @@ void TextureManager::InitTextures()
 	AddTexture("terrain", "Assets/Dungeon_tileset2.png");
 	AddTexture("glock", "Assets/csgo_glock.png");
 	AddTexture("bullet", "Assets/bullet.png");
+	AddTexture("crate", "Assets/static_objects/crate.png");
+	AddTexture("d_crate", "Assets/static_objects/double_crate.png");
 }
 
 void TextureManager::AddTexture(std::string id, const char* path)

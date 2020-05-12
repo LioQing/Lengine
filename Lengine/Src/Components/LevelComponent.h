@@ -4,6 +4,7 @@
 #include <lecs.h>
 #include <Matrix.h>
 #include <vector>
+#include <initializer_list>
 
 struct LevelComponent : public lecs::Component
 {
@@ -23,6 +24,7 @@ struct LevelComponent : public lecs::Component
 
 	Matrixi map;
 	std::vector<Rect> rooms;
+	std::vector<std::string> statics;
 
 	int null_index;
 	int floor_index;
@@ -33,6 +35,8 @@ struct LevelComponent : public lecs::Component
 
 	void GenMap(uint32_t n_room, uint32_t map_size, uint32_t room_min, uint32_t room_max, int floor_i, int wall_i, int side_wall_i, float cor_r = .8f, float cor_r_backup = 1.f);
 	void BuildWall(int floor_i, int null_i, int wall_i, int side_wall_i);
+	void GenStatics(int lower_num, int upper_num, int tile_size, lecs::EntityManager* entity_manager);
+	void SetStaticTextures(std::initializer_list<std::string> ids);
 
 	Rect GenRect(Vector2Di center, uint32_t width, uint32_t height);
 	bool AABB(Rect r1, Rect r2);

@@ -320,6 +320,12 @@ public:
 		return Vec2(1, 0);
 	}
 
+	template <typename T>
+	Vec2<T> Cast()
+	{
+		return Vec2<T>(x, y);
+	}
+
 	sf::Vector2f sfVector2f()
 	{
 		return sf::Vector2f(x, y);
