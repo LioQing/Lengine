@@ -17,6 +17,8 @@ void LevelComponent::GenMap(uint32_t n_room, uint32_t map_size, uint32_t room_mi
 	side_wall_index = side_wall_i;
 
 	map = Matrixi(map_size, map_size, null_index);
+	static_layer = Matrixi(map_size, map_size, 0);
+
 	uint32_t edge = (room_max + room_min) / 2;
 
 	for (auto i = 0u; i < n_room; ++i)
@@ -157,11 +159,44 @@ void LevelComponent::GenStatics(int lower_num, int upper_num, int tile_size, lec
 	{
 		int n = Random(lower_num, upper_num);
 
-		for (auto j = 0u; j < n; ++j)
+		for (auto j = 0; j < n; ++j)
 		{
 			Vector2Di position(Random(r.x, r.x + r.width - 1), Random(r.y, r.y + r.height - 1));
 
-			spawn::StaticObject(position.Cast<float>() * game->world_scale * tile_size, tile_size, statics.at(rand() % statics.size()));
+			int cnt = 0;
+			int last_i = 0;
+			int cycle = 0;
+			for (Vector2Di dir(0, 1);;)
+			{
+				if (map.At((position + dir).x, (position + dir).y) == floor_index && last_i != floor_index)
+				{
+					++cnt;
+				}
+
+				last_i = map.At((position + dir).x, (position + dir).y);
+
+				if (cnt > 1)
+				{
+					--j;
+					break;
+				}
+
+				if (cycle == 1) break;
+				if (dir == Vector2Di(0, 1)) dir = Vector2Di(-1, 1);
+				else if (dir == Vector2Di(-1, 1)) dir = Vector2Di(-1, 0);
+				else if (dir == Vector2Di(-1, 0)) dir = Vector2Di(-1, -1);
+				else if (dir == Vector2Di(-1, -1)) dir = Vector2Di(0, -1);
+				else if (dir == Vector2Di(0, -1)) dir = Vector2Di(1, -1);
+				else if (dir == Vector2Di(1, -1)) dir = Vector2Di(1, 0);
+				else if (dir == Vector2Di(1, 0)) dir = Vector2Di(1, 1);
+				else if (dir == Vector2Di(1, 1)) { dir = Vector2Di(0, 1); ++cycle; }
+			}
+
+			if (cnt <= 1)
+			{
+				static_layer.At(position.x, position.y) = 1;
+				spawn::StaticObject(position.Cast<float>() * game->world_scale * tile_size, tile_size, statics.at(rand() % statics.size()));
+			}
 		}
 	}
 }

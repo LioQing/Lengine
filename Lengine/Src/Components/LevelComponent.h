@@ -23,6 +23,7 @@ struct LevelComponent : public lecs::Component
 	};
 
 	Matrixi map;
+	Matrixi static_layer;
 	std::vector<Rect> rooms;
 	std::vector<std::string> statics;
 
