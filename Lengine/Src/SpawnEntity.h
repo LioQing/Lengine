@@ -18,10 +18,16 @@ namespace spawn
 			texture_id,
 			Vector2Df(0.f, game->texture_manager.GetTexture(texture_id).getSize().y - tile_size)
 			);
-		TransformComponent* transform = &static_obj->AddComponent<TransformComponent>(position,
+		TransformComponent* transform = &static_obj->AddComponent<TransformComponent>(
+			position,
 			sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height,
 			game->world_scale);
+		ColliderComponent* collider = &static_obj->AddComponent<ColliderComponent>(
+			position + Vector2Df(16.f, 16.f) * game->world_scale,
+			32 * game->world_scale.x, 32 * game->world_scale.y,
+			false
+			);
 
 		return static_obj;
 	}
@@ -42,7 +48,7 @@ namespace spawn
 		tilemap->LoadMap(level->map);
 		level->SetStaticTextures({ "crate", "d_crate" });
 		level->GenStatics(5, 8, 32, game->ecs_managers.entity_manager);
-		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x, Vector2Df(0.f ,16.f) * game->world_scale);
+		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x, Vector2Df(0.f ,32.f) * game->world_scale);
 
 		return map;
 	}
