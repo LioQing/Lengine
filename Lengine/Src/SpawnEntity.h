@@ -29,7 +29,27 @@ namespace spawn
 			false
 			);
 
+		game->ecs_managers.entity_manager->AddToGroup(static_obj, lecs::GRP_ENTITY);
+
 		return static_obj;
+	}
+
+	inline lecs::Entity* Staircase(Vector2Df position, std::string texture_id)
+	{
+		lecs::Entity* staircase = &game->ecs_managers.entity_manager->AddEntity();
+		SpriteComponent* sprite = &staircase->AddComponent<SpriteComponent>(
+			texture_id,
+			Vector2Df(0.f, 0.f)
+			);
+		TransformComponent* transform = &staircase->AddComponent<TransformComponent>(
+			position,
+			sprite->sprite.getTextureRect().width,
+			sprite->sprite.getTextureRect().height,
+			game->world_scale);
+
+		game->ecs_managers.entity_manager->AddToGroup(staircase, lecs::GRP_BACKGROUND_ENTITY);
+
+		return staircase;
 	}
 
 	inline lecs::Entity* Map()
@@ -50,6 +70,8 @@ namespace spawn
 		level->GenStatics(5, 8, 32, game->ecs_managers.entity_manager);
 		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x, Vector2Df(0.f ,32.f) * game->world_scale);
 
+		game->ecs_managers.entity_manager->AddToGroup(map, lecs::GRP_TERRAIN);
+
 		return map;
 	}
 
@@ -67,6 +89,8 @@ namespace spawn
 			),
 			65.f);
 
+		game->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_FOREGROUND_ENTITY);
+
 		return item;
 	}
 
@@ -80,6 +104,8 @@ namespace spawn
 		transform->speed = speed;
 		if (angle > 90 && angle < 270 || angle < -90 && angle > -270) transform->scale.y = fabsf(transform->scale.y) * -1;
 		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle, decay);
+
+		game->ecs_managers.entity_manager->AddToGroup(projectile, lecs::GRP_ENTITY);
 
 		return projectile;
 	}
@@ -95,6 +121,8 @@ namespace spawn
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
 		animation->AddAnimation("walk", 1, 8, 100);
+
+		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_ENTITY);
 		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_PLAYER);
 
 		return player;

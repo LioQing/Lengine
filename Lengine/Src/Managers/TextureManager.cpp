@@ -10,6 +10,10 @@ void TextureManager::InitTextures()
 	AddTexture("bullet", "Assets/bullet.png");
 	AddTexture("crate", "Assets/static_objects/crate.png");
 	AddTexture("d_crate", "Assets/static_objects/double_crate.png");
+	AddTexture("stair_right", "Assets/static_objects/stair_right.png");
+	AddTexture("stair_left", "Assets/static_objects/stair_left.png");
+	AddTexture("stair_up", "Assets/static_objects/stair_up.png");
+	AddTexture("stair_down", "Assets/static_objects/stair_down.png");
 }
 
 void TextureManager::AddTexture(std::string id, const char* path)

@@ -26,6 +26,7 @@ void Game::Init()
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
 	lecs::Entity* player = spawn::Player(spawn_pos);
+	lecs::Entity* stair = spawn::Staircase(spawn_pos, "stair_up");
 
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
 }

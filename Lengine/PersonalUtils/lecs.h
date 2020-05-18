@@ -164,6 +164,9 @@ namespace lecs
 	enum EntityGroup
 	{
 		GRP_PLAYER,
+		GRP_BACKGROUND_ENTITY,
+		GRP_ENTITY,
+		GRP_FOREGROUND_ENTITY,
 		GRP_TERRAIN,
 
 		GRP_SIZE
