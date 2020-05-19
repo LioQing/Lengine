@@ -68,6 +68,7 @@ namespace spawn
 		tilemap->LoadMap(level->map);
 		level->SetStaticTextures({ "crate", "d_crate" });
 		level->GenStatics(5, 8, 32, game->ecs_managers.entity_manager);
+		level->GenStair(32);
 		BoundaryComponent* boundary = &map->AddComponent<BoundaryComponent>(level->map, wall_i, side_wall_i, map_size, map_size, tile_size * game->world_scale.x, Vector2Df(0.f ,32.f) * game->world_scale);
 
 		game->ecs_managers.entity_manager->AddToGroup(map, lecs::GRP_TERRAIN);
@@ -89,7 +90,7 @@ namespace spawn
 			),
 			65.f);
 
-		game->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_FOREGROUND_ENTITY);
+		game->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_ENTITY);
 
 		return item;
 	}

@@ -173,7 +173,7 @@ public:
 		return Vec2(y, -x);
 	}
 
-	T Distance(const Vec2& v) const
+	double Distance(const Vec2& v) const
 	{
 		Vec2 d(v.x - x, v.y - y);
 		return d.Magnitude();

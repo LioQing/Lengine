@@ -209,6 +209,43 @@ void LevelComponent::SetStaticTextures(std::initializer_list<std::string> ids)
 	}
 }
 
+void LevelComponent::GenStair(int tile_size)
+{
+	float d_max = 0;
+	Rect* stair_r = nullptr;
+
+	for (auto itr = std::next(rooms.begin()); itr != rooms.end(); ++itr)
+	{
+		auto& r = *itr;
+		if (r.center.Distance(rooms.begin()->center) > d_max)
+		{
+			d_max = r.center.Distance(rooms.begin()->center);
+			stair_r = &r;
+		}
+	}
+
+	for (;;)
+	{
+		Vector2Di m_position(Random(stair_r->x, stair_r->x + stair_r->width), Random(stair_r->y, stair_r->y + stair_r->height));
+		if (static_layer.At(m_position.x, m_position.y) == 0)
+		{
+			auto i = Random(0, 3);
+			std::string texture_id = "stair_";
+			switch (i)
+			{
+				case 0: texture_id += "up"; break;
+				case 1: texture_id += "down"; break;
+				case 2: texture_id += "right"; break;
+				case 3: texture_id += "left"; break;
+				default: break;
+			}
+			spawn::Staircase(m_position.Cast<float>() * game->world_scale * tile_size, texture_id);
+			std::cout << texture_id << std::endl;
+			return;
+		}
+	}
+}
+
 LevelComponent::Rect LevelComponent::GenRect(Vector2Di center, uint32_t width, uint32_t height)
 {
 	Rect rect;
