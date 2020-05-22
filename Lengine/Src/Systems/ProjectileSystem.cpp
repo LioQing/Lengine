@@ -36,6 +36,48 @@ void ProjectileSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMa
 		if (projectile->decay_timer > projectile->decay)
 		{
 			e->Destroy();
+			continue;
+		}
+
+		std::vector<bool> results;
+
+		for (auto& c : entity_manager->EntityFilter<ColliderComponent>().entities)
+		{
+			if ((e->GetComponent<TransformComponent>().position - c->GetComponent<ColliderComponent>().position).Magnitude() > 100) continue;
+			results.emplace_back(HitWallDetect(&c->GetComponent<ColliderComponent>(), e));
+		}
+		for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
+		{
+			for (auto* boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
+			{
+				if (boundary_col == nullptr || 
+					(e->GetComponent<TransformComponent>().position - boundary_col->position).Magnitude() > 100) continue;
+				results.emplace_back(HitWallDetect(boundary_col, e));
+			}
+		}
+
+		for (bool r : results)
+		{
+			if (r)
+			{
+				e->Destroy();
+				break;
+			}
 		}
 	}
+}
+
+bool ProjectileSystem::HitWallDetect(ColliderComponent* col, lecs::Entity* e)
+{
+	auto pos = e->GetComponent<TransformComponent>().position + Vector2Df(e->GetComponent<TransformComponent>().width / 2, e->GetComponent<TransformComponent>().height / 2);
+	if (
+		pos.x < col->position.x + col->width / 2 &&
+		pos.x > col->position.x - col->width / 2 &&
+		pos.y < col->position.y + col->height / 2 &&
+		pos.y > col->position.y - col->height / 2
+		)
+	{
+		return true;
+	}
+	return false;
 }
