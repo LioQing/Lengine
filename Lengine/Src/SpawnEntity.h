@@ -90,7 +90,7 @@ namespace spawn
 			),
 			65.f);
 
-		game->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_ENTITY);
+		game->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_ITEM);
 
 		return item;
 	}

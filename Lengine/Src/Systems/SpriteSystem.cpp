@@ -18,17 +18,43 @@ void SpriteSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManage
 
 void SpriteSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
-	std::vector<std::future<void>> results;
 	for (auto& e : entity_manager->EntityFilter<TransformComponent>().EntityFilter<SpriteComponent>().entities)
 	{
-		results.emplace_back(game->tp.enqueue(&SpriteSystem::SubLateUpdate, this, entity_manager, event_manager, dt, e));
+		TransformComponent* transform = &e->GetComponent<TransformComponent>();
+		SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
+
+		// scale
+		sprite->sprite.setScale(transform->scale.sfVector2f());
+
+		// animation
+		if (e->HasComponent<AnimationComponent>())
+		{
+			AnimationComponent* animation = &e->GetComponent<AnimationComponent>();
+			sf::IntRect srcRect;
+			srcRect.width = transform->width;
+			srcRect.height = transform->height;
+			if (animation->current.delay != 0)
+			{
+				srcRect.left = srcRect.width * (static_cast<int>(animation->timer / animation->current.delay) % animation->current.frame);
+			}
+			else
+			{
+				game->logger->AddLog
+				(
+					"Error: Animation Component current animation delay is 0, cannot divide by 0",
+					lecs::LT_ERROR, lecs::LT_COMPONENT
+				);
+			}
+			srcRect.top = animation->current.index * transform->height;
+
+			sprite->sprite.setTextureRect(srcRect);
+		}
 	}
-	for (auto& r : results) r.get();
 }
 
 void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {
-	for (int grp = lecs::GRP_BACKGROUND_ENTITY; grp != lecs::GRP_FOREGROUND_ENTITY + 1; ++grp)
+	for (int grp = lecs::GRP_RENDER_BEGIN; grp != lecs::GRP_RENDER_END; ++grp)
 	{
 		std::vector<sf::Sprite*> draw_order;
 
@@ -66,38 +92,5 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 		}
 
 		for (auto s : draw_order) window->draw(*s);
-	}
-}
-
-void SpriteSystem::SubLateUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt, lecs::Entity* e)
-{
-	TransformComponent* transform = &e->GetComponent<TransformComponent>();
-	SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
-
-	// scale
-	sprite->sprite.setScale(transform->scale.sfVector2f());
-
-	// animation
-	if (e->HasComponent<AnimationComponent>())
-	{
-		AnimationComponent* animation = &e->GetComponent<AnimationComponent>();
-		sf::IntRect srcRect;
-		srcRect.width = transform->width;
-		srcRect.height = transform->height;
-		if (animation->current.delay != 0)
-		{
-			srcRect.left = srcRect.width * (static_cast<int>(animation->timer / animation->current.delay) % animation->current.frame);
-		}
-		else
-		{
-			game->logger->AddLog
-			(
-				"Error: Animation Component current animation delay is 0, cannot divide by 0",
-				lecs::LT_ERROR, lecs::LT_COMPONENT
-			);
-		}
-		srcRect.top = animation->current.index * transform->height;
-
-		sprite->sprite.setTextureRect(srcRect);
 	}
 }

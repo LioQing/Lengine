@@ -1,12 +1,10 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <ThreadPool.h>
 
 #include "Components/Components.h"
 #include "Game.h"
 
-ThreadPool tp(8);
 Game* game;
 
 int main()
@@ -15,16 +13,16 @@ int main()
     sf::Clock delta_clock;
 
     sf::RenderWindow window(sf::VideoMode(800, 640), "Lengine");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(0);
 
-    game = new Game(window, tp);
+    game = new Game(window);
     game->Init();
 
     while (window.isOpen())
     {
         game->HandleInput(delta_time);
         game->Update(delta_time);
-        //if (delta_time != 0) std::cout << delta_time << std::endl;
+        if (delta_time != 0) std::cout << 1000/delta_time << std::endl;
 
         window.clear();
         game->Render();

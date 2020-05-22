@@ -163,10 +163,14 @@ namespace lecs
 	// or you can use normal int
 	enum EntityGroup
 	{
+		GRP_RENDER_BEGIN,
 		GRP_PLAYER,
 		GRP_BACKGROUND_ENTITY,
 		GRP_ENTITY,
 		GRP_FOREGROUND_ENTITY,
+		GRP_ITEM,
+		GRP_RENDER_END,
+
 		GRP_TERRAIN,
 
 		GRP_SIZE

@@ -34,7 +34,7 @@ struct LevelComponent : public lecs::Component
 
 	LevelComponent(int null_i);
 
-	void GenMap(uint32_t n_room, uint32_t map_size, uint32_t room_min, uint32_t room_max, int floor_i, int wall_i, int side_wall_i, float cor_r = .8f, float cor_r_backup = 1.5f);
+	void GenMap(uint32_t n_room, uint32_t map_size, uint32_t room_min, uint32_t room_max, int floor_i, int wall_i, int side_wall_i, float cor_r = .8f, float cor_r_backup = 2.f);
 	void BuildWall(int floor_i, int null_i, int wall_i, int side_wall_i);
 
 	void GenStatics(int lower_num, int upper_num, int tile_size, lecs::EntityManager* entity_manager);

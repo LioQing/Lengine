@@ -3,7 +3,7 @@
 #include "Systems/Systems.h"
 #include "SpawnEntity.h"
 
-Game::Game(sf::RenderWindow& window, ThreadPool& tp) : window(window), tp(tp)
+Game::Game(sf::RenderWindow& window) : window(window)
 {
 	camera_manager.SetWindow(&window);
 

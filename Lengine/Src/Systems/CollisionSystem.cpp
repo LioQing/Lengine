@@ -61,14 +61,9 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 
 void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
-	std::vector<std::future<void>> results;
 	for (auto& e1 : entity_manager->EntityFilter<ColliderComponent>().entities)
 	{
-		results.emplace_back(game->tp.enqueue(&CollisionSystem::SubUpdate, this, e1, entity_manager, event_manager, dt));
-	}
-	for (auto& r : results)
-	{
-		r.get();
+		SubUpdate(e1, entity_manager, event_manager, dt);
 	}
 }
 
