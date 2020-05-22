@@ -22,7 +22,11 @@ void BoundaryComponent::LoadBoundary(Matrixi map, int wall_i, int side_wall_i, u
 	{
 		for (auto x = 0u; x < size_x; ++x)
 		{
-			if (map.At(x, y) == wall_i)
+			if (map.At(x, y) == side_wall_i)
+			{
+				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2, tile_size, tile_size);
+			}
+			else if (map.At(x, y) == wall_i)
 			{
 				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2 + wall_offset, tile_size, tile_size);
 			}

@@ -164,16 +164,19 @@ void LevelComponent::GenStatics(int lower_num, int upper_num, int tile_size, lec
 			Vector2Di position(Random(r.x, r.x + r.width - 1), Random(r.y, r.y + r.height - 1));
 
 			int cnt = 0;
-			int last_i = 0;
+			int last_i = floor_index;
+			int s_last = 0;
 			int cycle = 0;
 			for (Vector2Di dir(0, 1);;)
 			{
-				if (map.At((position + dir).x, (position + dir).y) == floor_index && last_i != floor_index)
+				if ((map.At((position + dir).x, (position + dir).y) == floor_index  || 
+					static_layer.At((position + dir).x, (position + dir).y) == 0) && (last_i != floor_index || s_last == 1))
 				{
 					++cnt;
 				}
 
 				last_i = map.At((position + dir).x, (position + dir).y);
+				s_last = static_layer.At((position + dir).x, (position + dir).y);
 
 				if (cnt > 1)
 				{
@@ -240,7 +243,7 @@ void LevelComponent::GenStair(int tile_size)
 				default: break;
 			}
 			spawn::Staircase(m_position.Cast<float>() * game->world_scale * tile_size, texture_id);
-			std::cout << texture_id << std::endl;
+
 			return;
 		}
 	}
