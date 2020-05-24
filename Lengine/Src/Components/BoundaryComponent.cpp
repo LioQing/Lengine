@@ -24,11 +24,11 @@ void BoundaryComponent::LoadBoundary(Matrixi map, int wall_i, int side_wall_i, u
 		{
 			if (map.At(x, y) == side_wall_i)
 			{
-				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2, tile_size, tile_size);
+				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2, tile_size, tile_size, ColliderComponent::TAG::SIDE_WALL);
 			}
 			else if (map.At(x, y) == wall_i)
 			{
-				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2 + wall_offset, tile_size, tile_size);
+				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2 + wall_offset, tile_size, tile_size, ColliderComponent::TAG::WALL);
 			}
 		}
 	}
@@ -45,7 +45,7 @@ void BoundaryComponent::LoadBoundary(const char* csv_path, uint32_t size_x, uint
 		{
 			if (csvr.GetValue(y, x) == "0")
 			{
-				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2, tile_size, tile_size);
+				boundaries[x + y * size_x] = new ColliderComponent(Vector2Df(x, y) * tile_size + tile_size / 2, tile_size, tile_size, ColliderComponent::TAG::WALL);
 			}
 		}
 	}

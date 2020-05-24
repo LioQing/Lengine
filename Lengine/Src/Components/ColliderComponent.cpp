@@ -4,23 +4,23 @@
 
 extern Game* game;
 
-ColliderComponent::ColliderComponent(Vector2Df position, uint32_t height, uint32_t width)
-	: position(position), height(height), width(width), fitTransform(false), followTransform(false), isKinematic(false)
+ColliderComponent::ColliderComponent(Vector2Df position, uint32_t height, uint32_t width, TAG tag)
+	: position(position), height(height), width(width), fitTransform(false), followTransform(false), isKinematic(false), tag(tag)
 {
 }
 
-ColliderComponent::ColliderComponent(Vector2Df position, uint32_t height, uint32_t width, bool isKinematic)
-	: position(position), height(height), width(width), fitTransform(false), followTransform(false), isKinematic(isKinematic)
+ColliderComponent::ColliderComponent(Vector2Df position, uint32_t height, uint32_t width, bool isKinematic, TAG tag)
+	: position(position), height(height), width(width), fitTransform(false), followTransform(false), isKinematic(isKinematic), tag(tag)
 {
 }
 
-ColliderComponent::ColliderComponent(uint32_t height, uint32_t width, bool followTransform, bool isKinematic)
-	: position(Vector2Df::Zero()), height(height), width(width), fitTransform(false), followTransform(followTransform), isKinematic(isKinematic)
+ColliderComponent::ColliderComponent(uint32_t height, uint32_t width, bool followTransform, bool isKinematic, TAG tag)
+	: position(Vector2Df::Zero()), height(height), width(width), fitTransform(false), followTransform(followTransform), isKinematic(isKinematic), tag(tag)
 {
 }
 
-ColliderComponent::ColliderComponent(bool fitTransform, bool followTransform, bool isKinematic)
-	: position(Vector2Df::Zero()), height(0), width(0), fitTransform(fitTransform), followTransform(followTransform), isKinematic(isKinematic)
+ColliderComponent::ColliderComponent(bool fitTransform, bool followTransform, bool isKinematic, TAG tag)
+	: position(Vector2Df::Zero()), height(0), width(0), fitTransform(fitTransform), followTransform(followTransform), isKinematic(isKinematic), tag(tag)
 {
 }
 

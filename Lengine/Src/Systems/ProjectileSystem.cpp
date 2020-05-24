@@ -32,6 +32,7 @@ void ProjectileSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMa
 	{
 		ProjectileComponent* projectile = &e->GetComponent<ProjectileComponent>();
 
+		// decay
 		projectile->decay_timer += delta_time;
 		if (projectile->decay_timer > projectile->decay)
 		{
@@ -39,12 +40,19 @@ void ProjectileSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMa
 			continue;
 		}
 
-		std::vector<bool> results;
-
+		// hit wall detections
 		for (auto& c : entity_manager->EntityFilter<ColliderComponent>().entities)
 		{
 			if ((e->GetComponent<TransformComponent>().position - c->GetComponent<ColliderComponent>().position).Magnitude() > 100) continue;
-			results.emplace_back(HitWallDetect(&c->GetComponent<ColliderComponent>(), e));
+			if (HitWallDetect(&c->GetComponent<ColliderComponent>(), e))
+			{
+				if (!(c->GetComponent<ColliderComponent>().tag == ColliderComponent::TAG::WALL))
+				{
+					continue;
+				}
+				e->Destroy();
+				return;
+			}
 		}
 		for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
 		{
@@ -52,16 +60,15 @@ void ProjectileSystem::Update(lecs::EntityManager* entity_manager, lecs::EventMa
 			{
 				if (boundary_col == nullptr || 
 					(e->GetComponent<TransformComponent>().position - boundary_col->position).Magnitude() > 100) continue;
-				results.emplace_back(HitWallDetect(boundary_col, e));
-			}
-		}
-
-		for (bool r : results)
-		{
-			if (r)
-			{
-				e->Destroy();
-				break;
+				if (HitWallDetect(boundary_col, e))
+				{
+					if (!(boundary_col->tag == ColliderComponent::TAG::WALL))
+					{
+						continue;
+					}
+					e->Destroy();
+					return;
+				}
 			}
 		}
 	}

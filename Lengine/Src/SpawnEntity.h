@@ -26,7 +26,8 @@ namespace spawn
 		ColliderComponent* collider = &static_obj->AddComponent<ColliderComponent>(
 			position + Vector2Df(16.f, 16.f) * game->world_scale,
 			32 * game->world_scale.x, 32 * game->world_scale.y,
-			false
+			false,
+			ColliderComponent::TAG::STATIC
 			);
 
 		game->ecs_managers.entity_manager->AddToGroup(static_obj, lecs::GRP_ENTITY);
@@ -100,6 +101,7 @@ namespace spawn
 		lecs::Entity* projectile = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &projectile->AddComponent<SpriteComponent>("bullet");
 		sprite->sprite.setRotation(angle);
+		sprite->SetDrawOrderPoint(48.f);
 		TransformComponent* transform = &projectile->AddComponent<TransformComponent>(position, sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game->world_scale);
 		transform->speed = speed;
@@ -117,7 +119,7 @@ namespace spawn
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = &player->AddComponent<TransformComponent>(position, 32, 32, Vector2Df(3.f, 3.f), 4.f);
-		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(4 * game->world_scale.x, 16 * game->world_scale.y, true, true);
+		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(4 * game->world_scale.x, 16 * game->world_scale.y, true, true, ColliderComponent::TAG::PLAYER);
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game->world_scale + Vector2Df(0.f, transform->height));
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);

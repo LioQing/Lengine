@@ -56,7 +56,7 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 {
 	for (int grp = lecs::GRP_RENDER_BEGIN; grp != lecs::GRP_RENDER_END; ++grp)
 	{
-		std::vector<sf::Sprite*> draw_order;
+		std::vector<SpriteComponent*> draw_order;
 
 		for (auto& e : entity_manager->GetGroup(grp).EntityFilter<TransformComponent>().EntityFilter<SpriteComponent>().entities)
 		{
@@ -75,22 +75,22 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 			}
 
 			// insert
-			draw_order.push_back(&sprite->sprite);
+			draw_order.push_back(sprite);
 		}
 
 		for (int x = 0; x < draw_order.size(); x++)
 		{
 			for (int y = 0; y < draw_order.size() - 1; y++)
 			{
-				if (draw_order[y]->getGlobalBounds().top + draw_order[y]->getGlobalBounds().height > draw_order[y + 1]->getGlobalBounds().top + draw_order[y + 1]->getGlobalBounds().height)
+				if (draw_order[y]->GetDrawOrderPoint() > draw_order[y + 1]->GetDrawOrderPoint())
 				{
-					sf::Sprite* temp = draw_order[y + 1];
+					SpriteComponent* temp = draw_order[y + 1];
 					draw_order[y + 1] = draw_order[y];
 					draw_order[y] = temp;
 				}
 			}
 		}
 
-		for (auto s : draw_order) window->draw(*s);
+		for (auto s : draw_order) window->draw(s->sprite);
 	}
 }
