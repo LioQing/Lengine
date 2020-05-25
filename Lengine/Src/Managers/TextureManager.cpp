@@ -4,7 +4,7 @@
 
 void TextureManager::InitTextures()
 {
-	AddTexture("player", "Assets/player.png");
+	AddTexture("player", "Assets/player2.png");
 	AddTexture("terrain", "Assets/Dungeon_tileset2.png");
 	AddTexture("glock", "Assets/csgo_glock.png");
 	AddTexture("bullet", "Assets/bullet.png");
