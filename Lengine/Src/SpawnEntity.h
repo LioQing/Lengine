@@ -29,6 +29,11 @@ namespace spawn
 			false,
 			ColliderComponent::TAG::STATIC
 			);
+		ProjColComponent* projcol = &static_obj->AddComponent<ProjColComponent>(
+			position + Vector2Df(16.f, 8.f) * game->world_scale,
+			34 * game->world_scale.x, 34 * game->world_scale.y,
+			false
+			);
 
 		game->ecs_managers.entity_manager->AddToGroup(static_obj, lecs::GRP_ENTITY);
 
@@ -101,7 +106,7 @@ namespace spawn
 		lecs::Entity* projectile = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &projectile->AddComponent<SpriteComponent>("bullet");
 		sprite->sprite.setRotation(angle);
-		sprite->SetDrawOrderPoint(48.f);
+		sprite->SetDrawOrderPoint(64.f);
 		TransformComponent* transform = &projectile->AddComponent<TransformComponent>(position, sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game->world_scale);
 		transform->speed = speed;

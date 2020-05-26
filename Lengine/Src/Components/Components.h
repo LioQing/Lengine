@@ -9,5 +9,6 @@
 #include "ItemComponent.h"
 #include "ProjectileComponent.h"
 #include "LevelComponent.h"
+#include "ProjColComponent.h"
 
-#include "Items/GunComponent.h""
+#include "Items/GunComponent.h"

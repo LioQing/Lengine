@@ -150,6 +150,7 @@
     <ClCompile Include="Src\Components\ItemComponent.cpp" />
     <ClCompile Include="Src\Components\Items\GunComponent.cpp" />
     <ClCompile Include="Src\Components\LevelComponent.cpp" />
+    <ClCompile Include="Src\Components\ProjColComponent.cpp" />
     <ClCompile Include="Src\Components\ProjectileComponent.cpp" />
     <ClCompile Include="Src\Components\SpriteComponent.cpp" />
     <ClCompile Include="Src\Components\TileMapComponent.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Src\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Src\Systems\ItemSystem.cpp" />
     <ClCompile Include="Src\Systems\MovementSystem.cpp" />
+    <ClCompile Include="Src\Systems\ProjColSystem.cpp" />
     <ClCompile Include="Src\Systems\ProjectileSystem.cpp" />
     <ClCompile Include="Src\Systems\SpriteSystem.cpp" />
     <ClCompile Include="Src\Systems\TileMapSystem.cpp" />
@@ -178,6 +180,7 @@
     <ClInclude Include="Src\Components\ItemComponent.h" />
     <ClInclude Include="Src\Components\Items\GunComponent.h" />
     <ClInclude Include="Src\Components\LevelComponent.h" />
+    <ClInclude Include="Src\Components\ProjColComponent.h" />
     <ClInclude Include="Src\Components\ProjectileComponent.h" />
     <ClInclude Include="Src\Components\SpriteComponent.h" />
     <ClInclude Include="Src\Components\TileMapComponent.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="Src\SpawnEntity.h" />
     <ClInclude Include="Src\Systems\CollisionSystem.h" />
     <ClInclude Include="Src\Systems\ItemSystem.h" />
+    <ClInclude Include="Src\Systems\ProjColSystem.h" />
     <ClInclude Include="Src\Systems\ProjectileSystem.h" />
     <ClInclude Include="Src\Systems\Systems.h" />
     <ClInclude Include="Src\Systems\MovementSystem.h" />

@@ -21,6 +21,7 @@ void Game::Init()
 	ecs_managers.system_manager->AddSystem<CollisionSystem>();
 	ecs_managers.system_manager->AddSystem<ItemSystem>();
 	ecs_managers.system_manager->AddSystem<ProjectileSystem>();
+	ecs_managers.system_manager->AddSystem<ProjColSystem>();
 
 	lecs::Entity* map = spawn::Map();
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
@@ -62,4 +63,5 @@ void Game::Render()
 	ecs_managers.system_manager->Draw(&window);
 	ecs_managers.system_manager->GetSystem<TileMapSystem>().LateDraw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 	ecs_managers.system_manager->GetSystem<CollisionSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
+	ecs_managers.system_manager->GetSystem<ProjColSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 }
