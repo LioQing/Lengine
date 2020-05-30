@@ -13,6 +13,7 @@ struct ColliderComponent : public lecs::Component
 		PLAYER,
 		STATIC,
 		WALL,
+		ENEMY,
 
 		TAG_SIZE
 	};

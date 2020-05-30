@@ -8,7 +8,7 @@ Game::Game(sf::RenderWindow& window) : window(window)
 	camera_manager.SetWindow(&window);
 
 	logger = &lecs::logger;
-	//lecs::logger.AlwaysShow();
+	lecs::logger.AlwaysShow();
 }
 
 void Game::Init()
@@ -27,6 +27,7 @@ void Game::Init()
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
 	lecs::Entity* player = spawn::Player(spawn_pos);
+	lecs::Entity* enemy = spawn::Enemy(spawn_pos);
 
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
 }

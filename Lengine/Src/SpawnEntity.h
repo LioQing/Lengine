@@ -123,7 +123,7 @@ namespace spawn
 		lecs::Entity* player = &game->ecs_managers.entity_manager->AddEntity();
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
-		TransformComponent* transform = &player->AddComponent<TransformComponent>(position, 32, 32, Vector2Df(3.f, 3.f), 4.f);
+		TransformComponent* transform = &player->AddComponent<TransformComponent>(position, 32, 32, game->world_scale, 4.f);
 		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(4 * game->world_scale.x, 16 * game->world_scale.y, true, true, ColliderComponent::TAG::PLAYER);
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game->world_scale + Vector2Df(0.f, transform->height));
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
@@ -134,5 +134,19 @@ namespace spawn
 		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_PLAYER);
 
 		return player;
+	}
+
+	inline lecs::Entity* Enemy(Vector2Df position)
+	{
+		lecs::Entity* enemy = &game->ecs_managers.entity_manager->AddEntity();
+		SpriteComponent* sprite = &enemy->AddComponent<SpriteComponent>("enemy", Vector2Df(16.f, 16.f));
+		TransformComponent* transform = &enemy->AddComponent<TransformComponent>(position, 32, 32, game->world_scale, 4.f);
+		ColliderComponent* collider = &enemy->AddComponent<ColliderComponent>(4 * game->world_scale.x, 16 * game->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);
+		collider->SetOffset(Vector2Df(0.f, 3.f) * game->world_scale + Vector2Df(0.f, transform->height));
+
+		game->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENTITY);
+		game->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENEMY);
+
+		return enemy;
 	}
 }
