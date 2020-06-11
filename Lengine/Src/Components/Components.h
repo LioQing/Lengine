@@ -12,3 +12,6 @@
 #include "ProjColComponent.h"
 
 #include "Items/GunComponent.h"
+
+#include "CircleHitBoxes/BodyHitBoxComponent.h"
+#include "CircleHitBoxes/ProjHitBoxComponent.h"

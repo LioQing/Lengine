@@ -7,3 +7,4 @@
 #include "ItemSystem.h"
 #include "ProjectileSystem.h"
 #include "ProjColSystem.h"
+#include "HitBoxSystem.h"

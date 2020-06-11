@@ -85,14 +85,14 @@ namespace spawn
 	inline lecs::Entity* Weapon()
 	{
 		lecs::Entity* item = &game->ecs_managers.entity_manager->AddEntity();
-		SpriteComponent* sprite = &item->AddComponent<SpriteComponent>("glock");
+		SpriteComponent* sprite = &item->AddComponent<SpriteComponent>("glock", Vector2Df(4.5f, 1.f));
 		TransformComponent* transform = &item->AddComponent<TransformComponent>(Vector2Df(400, 320), sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game->world_scale);
 		GunComponent* gun = &item->AddComponent<GunComponent>(
 			Vector2Df
 			(
 				sprite->sprite.getTextureRect().width * game->world_scale.x, 
-				sprite->sprite.getTextureRect().height * game->world_scale.y / 2 - 3
+				0.f
 			),
 			65.f);
 
@@ -101,7 +101,7 @@ namespace spawn
 		return item;
 	}
 
-	inline lecs::Entity* Projectile(Vector2Df position, float speed, float decay, float angle = 0.f) // temporary for testing
+	inline lecs::Entity* Projectile(Vector2Df position, float speed, float decay, float radius, float angle = 0.f) // temporary for testing
 	{
 		lecs::Entity* projectile = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &projectile->AddComponent<SpriteComponent>("bullet");
@@ -112,6 +112,7 @@ namespace spawn
 		transform->speed = speed;
 		if (angle > 90 && angle < 270 || angle < -90 && angle > -270) transform->scale.y = fabsf(transform->scale.y) * -1;
 		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle, decay);
+		ProjHitBoxComponent* phb = &projectile->AddComponent<ProjHitBoxComponent>(radius);
 
 		game->ecs_managers.entity_manager->AddToGroup(projectile, lecs::GRP_ENTITY);
 

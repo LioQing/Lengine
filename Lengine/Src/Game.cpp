@@ -22,6 +22,7 @@ void Game::Init()
 	ecs_managers.system_manager->AddSystem<ItemSystem>();
 	ecs_managers.system_manager->AddSystem<ProjectileSystem>();
 	ecs_managers.system_manager->AddSystem<ProjColSystem>();
+	ecs_managers.system_manager->AddSystem<HitBoxSystem>();
 
 	lecs::Entity* map = spawn::Map();
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
