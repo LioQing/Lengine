@@ -8,7 +8,7 @@ Game::Game(sf::RenderWindow& window) : window(window)
 	camera_manager.SetWindow(&window);
 
 	logger = &lecs::logger;
-	lecs::logger.AlwaysShow();
+	//lecs::logger.AlwaysShow();
 }
 
 void Game::Init()

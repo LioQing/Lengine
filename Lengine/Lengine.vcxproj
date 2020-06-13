@@ -147,6 +147,7 @@
     <ClCompile Include="Src\Components\AnimationComponent.cpp" />
     <ClCompile Include="Src\Components\BoundaryComponent.cpp" />
     <ClCompile Include="Src\Components\CircleHitBoxes\BodyHitBoxComponent.cpp" />
+    <ClCompile Include="Src\Components\CircleHitBoxes\HeadHitBoxComponent.cpp" />
     <ClCompile Include="Src\Components\CircleHitBoxes\ProjHitBoxComponent.cpp" />
     <ClCompile Include="Src\Components\ColliderComponent.cpp" />
     <ClCompile Include="Src\Components\ItemComponent.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Src\Components\AnimationComponent.h" />
     <ClInclude Include="Src\Components\BoundaryComponent.h" />
     <ClInclude Include="Src\Components\CircleHitBoxes\BodyHitBoxComponent.h" />
+    <ClInclude Include="Src\Components\CircleHitBoxes\HeadHitBoxComponent.h" />
     <ClInclude Include="Src\Components\CircleHitBoxes\ProjHitBoxComponent.h" />
     <ClInclude Include="Src\Components\ColliderComponent.h" />
     <ClInclude Include="Src\Components\Components.h" />

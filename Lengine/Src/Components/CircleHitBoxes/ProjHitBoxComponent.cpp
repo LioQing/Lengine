@@ -4,6 +4,6 @@ ProjHitBoxComponent::ProjHitBoxComponent(float r) : radius(r)
 {
 }
 
-ProjHitBoxComponent::ProjHitBoxComponent(float r, float y) : radius(r), y_offset(y)
+ProjHitBoxComponent::ProjHitBoxComponent(float r, float x) : radius(r), x_offset(x)
 {
 }

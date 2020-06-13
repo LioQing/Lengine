@@ -14,4 +14,5 @@
 #include "Items/GunComponent.h"
 
 #include "CircleHitBoxes/BodyHitBoxComponent.h"
+#include "CircleHitBoxes/HeadHitBoxComponent.h"
 #include "CircleHitBoxes/ProjHitBoxComponent.h"

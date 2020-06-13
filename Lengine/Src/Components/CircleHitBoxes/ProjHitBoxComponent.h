@@ -5,8 +5,8 @@
 struct ProjHitBoxComponent : public lecs::Component
 {
 	float radius;
-	float y_offset;
+	float x_offset;
 
 	ProjHitBoxComponent(float r);
-	ProjHitBoxComponent(float r, float y);
+	ProjHitBoxComponent(float r, float x);
 };

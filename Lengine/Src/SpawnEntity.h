@@ -130,6 +130,8 @@ namespace spawn
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
 		animation->AddAnimation("walk", 1, 8, 100);
+		BodyHitBoxComponent* bdhb = &player->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
+		HeadHitBoxComponent* hhb = &player->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
 
 		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_ENTITY);
 		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_PLAYER);
@@ -144,6 +146,8 @@ namespace spawn
 		TransformComponent* transform = &enemy->AddComponent<TransformComponent>(position, 32, 32, game->world_scale, 4.f);
 		ColliderComponent* collider = &enemy->AddComponent<ColliderComponent>(4 * game->world_scale.x, 16 * game->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game->world_scale + Vector2Df(0.f, transform->height));
+		BodyHitBoxComponent* bdhb = &enemy->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
+		HeadHitBoxComponent* hhb = &enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
 
 		game->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENTITY);
 		game->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENEMY);
