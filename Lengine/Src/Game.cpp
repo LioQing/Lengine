@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Components/Components.h"
 #include "Systems/Systems.h"
+#include "Events/Events.h"
 #include "SpawnEntity.h"
 
 Game::Game(sf::RenderWindow& window) : window(window)
@@ -15,6 +16,10 @@ void Game::Init()
 {
 	texture_manager.InitTextures();
 
+	// events
+	ecs_managers.event_manager->AddEvent<HitBoxEvent>();
+
+	// systems
 	ecs_managers.system_manager->AddSystem<TileMapSystem>();
 	ecs_managers.system_manager->AddSystem<MovementSystem>();
 	ecs_managers.system_manager->AddSystem<SpriteSystem>();
@@ -23,14 +28,23 @@ void Game::Init()
 	ecs_managers.system_manager->AddSystem<ProjectileSystem>();
 	ecs_managers.system_manager->AddSystem<ProjColSystem>();
 	ecs_managers.system_manager->AddSystem<HitBoxSystem>();
+	ecs_managers.system_manager->AddSystem<HealthSystem>();
 
+	// spawns
 	lecs::Entity* map = spawn::Map();
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
 	lecs::Entity* player = spawn::Player(spawn_pos);
 	lecs::Entity* enemy = spawn::Enemy(spawn_pos);
 
+	// camera
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
+
+	// other things for debugging
+	//ecs_managers.system_manager->GetSystem<CollisionSystem>().draw_colBox = true;
+	//HitBoxSystem* hb_system = &ecs_managers.system_manager->GetSystem<HitBoxSystem>();
+	//hb_system->draw_characters = true;
+	//hb_system->draw_proj = true;
 }
 
 void Game::HandleInput(DeltaTime dt)
@@ -50,6 +64,7 @@ void Game::Update(DeltaTime dt)
 	ecs_managers.system_manager->GetSystem<MovementSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 	ecs_managers.system_manager->GetSystem<ItemSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 	ecs_managers.system_manager->GetSystem<ProjectileSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
+	ecs_managers.system_manager->GetSystem<HitBoxSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 	ecs_managers.system_manager->GetSystem<CollisionSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 
 	ecs_managers.UpdateECSManagers(dt);

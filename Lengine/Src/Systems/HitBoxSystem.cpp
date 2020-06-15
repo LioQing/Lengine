@@ -3,30 +3,64 @@
 #include <SFML/Graphics.hpp>
 
 #include "../Components/Components.h"
+#include "../Events/Events.h"
 
 void HitBoxSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
-{
-	
-}
-
-void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {
 	for (auto& proj : entity_manager->EntityFilter<ProjHitBoxComponent>().entities)
 	{
 		auto* phb = &proj->GetComponent<ProjHitBoxComponent>();
 		auto* transform = &proj->GetComponent<TransformComponent>();
 
-		sf::CircleShape circle;
+		for (auto& body : entity_manager->EntityFilter<BodyHitBoxComponent>().entities)
+		{
+			TransformComponent* hTransform = &body->GetComponent<TransformComponent>();
 
-		circle.setRadius(phb->radius);
-		circle.setFillColor(sf::Color(sf::Color::Transparent));
-		circle.setOutlineColor(sf::Color(sf::Color::Green));
-		circle.setOrigin(circle.getRadius(), circle.getRadius());
-		circle.setPosition(transform->position.sfVector2f());
-		circle.setOutlineThickness(3.f);
+			if (body->HasComponent<HeadHitBoxComponent>())
+			{
+				HeadHitBoxComponent* hhb = &body->GetComponent<HeadHitBoxComponent>();
 
-		window->draw(circle);
+				if ((hTransform->position + hhb->position).Distance(transform->position) <= hhb->radius + phb->radius)
+				{
+					proj->Destroy();
+					event_manager->Emit<HitBoxEvent>(proj, body, true);
+				}
+			}
+
+			BodyHitBoxComponent* bhb = &body->GetComponent<BodyHitBoxComponent>();
+
+			if ((hTransform->position + bhb->position).Distance(transform->position) <= bhb->radius + phb->radius)
+			{
+				proj->Destroy();
+				event_manager->Emit<HitBoxEvent>(proj, body, false);
+			}
+		}
 	}
+}
+
+void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
+{
+	if (draw_proj)
+	{
+		for (auto& proj : entity_manager->EntityFilter<ProjHitBoxComponent>().entities)
+		{
+			auto* phb = &proj->GetComponent<ProjHitBoxComponent>();
+			auto* transform = &proj->GetComponent<TransformComponent>();
+
+			sf::CircleShape circle;
+
+			circle.setRadius(phb->radius);
+			circle.setFillColor(sf::Color(sf::Color::Transparent));
+			circle.setOutlineColor(sf::Color(sf::Color::Green));
+			circle.setOrigin(circle.getRadius(), circle.getRadius());
+			circle.setPosition(transform->position.sfVector2f());
+			circle.setOutlineThickness(3.f);
+
+			window->draw(circle);
+		}
+	}
+
+	if (!draw_characters) return;
 
 	for (auto& character : entity_manager->EntityFilter<BodyHitBoxComponent>().entities)
 	{

@@ -41,22 +41,24 @@ void CollisionSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::Eve
 
 void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {
-	//for (auto& e : entity_manager->EntityFilter<ColliderComponent>().entities)
-	//{
-	//	ColliderComponent* col = &e->GetComponent<ColliderComponent>();
-	//	col->UpdateBox();
-	//	window->draw(col->box);
-	//}
+	if (!draw_colBox) return;
 
-	//for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
-	//{
-	//	for (auto& boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
-	//	{
-	//		if (boundary_col == nullptr) continue;
-	//		boundary_col->UpdateBox();
-	//		window->draw(boundary_col->box);
-	//	}
-	//}
+	for (auto& e : entity_manager->EntityFilter<ColliderComponent>().entities)
+	{
+		ColliderComponent* col = &e->GetComponent<ColliderComponent>();
+		col->UpdateBox();
+		window->draw(col->box);
+	}
+
+	for (auto& e2 : entity_manager->EntityFilter<BoundaryComponent>().entities)
+	{
+		for (auto& boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
+		{
+			if (boundary_col == nullptr) continue;
+			boundary_col->UpdateBox();
+			window->draw(boundary_col->box);
+		}
+	}
 }
 
 void CollisionSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
