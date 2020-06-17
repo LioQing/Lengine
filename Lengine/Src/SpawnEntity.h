@@ -132,6 +132,8 @@ namespace spawn
 		animation->AddAnimation("walk", 1, 8, 100);
 		BodyHitBoxComponent* bdhb = &player->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
 		HeadHitBoxComponent* hhb = &player->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
+		HealthComponent* hp = &player->AddComponent<HealthComponent>(100.f);
+		hp->SetHealthBar({ 0.f, -32.f });
 
 		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_ENTITY);
 		game->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_PLAYER);
@@ -148,6 +150,8 @@ namespace spawn
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game->world_scale + Vector2Df(0.f, transform->height));
 		BodyHitBoxComponent* bdhb = &enemy->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
 		HeadHitBoxComponent* hhb = &enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
+		HealthComponent* hp = &enemy->AddComponent<HealthComponent>(100.f);
+		hp->SetHealthBar({ 0.f, -32.f });
 
 		game->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENTITY);
 		game->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENEMY);

@@ -10,6 +10,7 @@
 #include "ProjectileComponent.h"
 #include "LevelComponent.h"
 #include "ProjColComponent.h"
+#include "HealthComponent.h"
 
 #include "Items/GunComponent.h"
 
