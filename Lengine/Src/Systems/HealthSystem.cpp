@@ -1,7 +1,10 @@
 #include "HealthSystem.h"
 
+#include "../Game.h"
 #include "../Components/Components.h"
 #include "../Events/Events.h"
+
+extern Game* game;
 
 void HealthSystem::Init(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, lecs::SystemManager* system_manager)
 {
@@ -15,15 +18,9 @@ void HealthSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManage
 		HealthComponent* hp = &ch->GetComponent<HealthComponent>();
 		TransformComponent* transform = &ch->GetComponent<TransformComponent>();
 
-		Vector2Df size(36.f, 4.f); // default size
-
-		hp->bar.setSize(Vector2Df(size.x * hp->hp / hp->max_hp, size.y).sfVector2f());
-		hp->bar.setOrigin(0.f, size.y / 2);
-		hp->bar.setPosition((transform->position + hp->offset - Vector2Df(size.x / 2, 0.f)).sfVector2f());
-
-		hp->bar_frame.setSize(size.sfVector2f());
-		hp->bar_frame.setOrigin(0.f, size.y / 2);
-		hp->bar_frame.setPosition((transform->position + hp->offset - Vector2Df(size.x / 2, 0.f)).sfVector2f());
+		hp->bar.setPosition((transform->position + hp->offset - Vector2Df(hp->size.x / 2, 0.f)).sfVector2f());
+		hp->bar.setSize(Vector2Df(hp->size.x * hp->hp / hp->max_hp, hp->size.y).sfVector2f());
+		hp->bar_frame.setPosition((transform->position + hp->offset - Vector2Df(hp->size.x / 2, 0.f)).sfVector2f());
 	}
 }
 
@@ -32,8 +29,12 @@ void HealthSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 	for (auto& ch : entity_manager->EntityFilter<HealthComponent>().entities)
 	{
 		HealthComponent* hp = &ch->GetComponent<HealthComponent>();
-		window->draw(hp->bar);
+
+		if (!game->InsideView(hp->bar_frame.getGlobalBounds())) continue;
 		window->draw(hp->bar_frame);
+
+		if (!game->InsideView(hp->bar.getGlobalBounds())) continue;
+		window->draw(hp->bar);
 	}
 }
 

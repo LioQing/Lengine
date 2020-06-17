@@ -2,8 +2,11 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../Game.h"
 #include "../Components/Components.h"
 #include "../Events/Events.h"
+
+extern Game* game;
 
 void HitBoxSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
@@ -47,16 +50,10 @@ void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 			auto* phb = &proj->GetComponent<ProjHitBoxComponent>();
 			auto* transform = &proj->GetComponent<TransformComponent>();
 
-			sf::CircleShape circle;
+			phb->circle.setPosition(transform->position.sfVector2f());
 
-			circle.setRadius(phb->radius);
-			circle.setFillColor(sf::Color(sf::Color::Transparent));
-			circle.setOutlineColor(sf::Color(sf::Color::Green));
-			circle.setOrigin(circle.getRadius(), circle.getRadius());
-			circle.setPosition(transform->position.sfVector2f());
-			circle.setOutlineThickness(3.f);
-
-			window->draw(circle);
+			if (!game->InsideView(phb->circle.getGlobalBounds())) continue;
+			window->draw(phb->circle);
 		}
 	}
 
@@ -67,28 +64,18 @@ void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 		auto* bdhb = &character->GetComponent<BodyHitBoxComponent>();
 		auto* transform = &character->GetComponent<TransformComponent>();
 
-		sf::CircleShape bdcircle;
-
-		bdcircle.setRadius(bdhb->radius);
-		bdcircle.setFillColor(sf::Color(sf::Color::Transparent));
-		bdcircle.setOutlineColor(sf::Color(sf::Color::Green));
-		bdcircle.setOrigin(bdcircle.getRadius(), bdcircle.getRadius());
-		bdcircle.setPosition((transform->position + bdhb->position).sfVector2f());
-		bdcircle.setOutlineThickness(3.f);
-
-		window->draw(bdcircle);
+		bdhb->circle.setPosition((transform->position + bdhb->position).sfVector2f());
+		
+		if (!game->InsideView(bdhb->circle.getGlobalBounds())) continue;
+		window->draw(bdhb->circle);
 
 		if (!character->HasComponent<HeadHitBoxComponent>()) continue;
 
 		auto* hhb = &character->GetComponent<HeadHitBoxComponent>();
 
-		bdcircle.setRadius(hhb->radius);
-		bdcircle.setFillColor(sf::Color(sf::Color::Transparent));
-		bdcircle.setOutlineColor(sf::Color(sf::Color::Green));
-		bdcircle.setOrigin(bdcircle.getRadius(), bdcircle.getRadius());
-		bdcircle.setPosition((transform->position + hhb->position).sfVector2f());
-		bdcircle.setOutlineThickness(3.f);
+		hhb->circle.setPosition((transform->position + hhb->position).sfVector2f());
 
-		window->draw(bdcircle);
+		if (!game->InsideView(hhb->circle.getGlobalBounds())) continue;
+		window->draw(hhb->circle);
 	}
 }

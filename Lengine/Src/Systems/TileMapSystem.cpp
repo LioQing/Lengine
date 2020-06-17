@@ -15,15 +15,7 @@ void TileMapSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager
 		for (auto& s : tilemap->tiles)
 		{
 			// off screen no draw
-			if (
-				s.getGlobalBounds().left > game->camera_manager.GetViewBounds().left + game->camera_manager.GetViewBounds().width ||
-				s.getGlobalBounds().top > game->camera_manager.GetViewBounds().top + game->camera_manager.GetViewBounds().height ||
-				s.getGlobalBounds().left + s.getGlobalBounds().width < game->camera_manager.GetViewBounds().left ||
-				s.getGlobalBounds().top + s.getGlobalBounds().height < game->camera_manager.GetViewBounds().top
-				)
-			{
-				continue;
-			}
+			if (!game->InsideView(s.getGlobalBounds())) continue;
 
 			window->draw(s);
 		}
@@ -40,15 +32,7 @@ void TileMapSystem::LateDraw(lecs::EntityManager* entity_manager, lecs::EventMan
 		for (auto& s : tilemap->top_layer_tiles)
 		{
 			// off screen no draw
-			if (
-				s.getGlobalBounds().left > game->camera_manager.GetViewBounds().left + game->camera_manager.GetViewBounds().width ||
-				s.getGlobalBounds().top > game->camera_manager.GetViewBounds().top + game->camera_manager.GetViewBounds().height ||
-				s.getGlobalBounds().left + s.getGlobalBounds().width < game->camera_manager.GetViewBounds().left ||
-				s.getGlobalBounds().top + s.getGlobalBounds().height < game->camera_manager.GetViewBounds().top
-				)
-			{
-				continue;
-			}
+			if (!game->InsideView(s.getGlobalBounds())) continue;
 
 			window->draw(s);
 		}

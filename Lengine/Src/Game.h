@@ -32,4 +32,6 @@ public:
 	void HandleInput(DeltaTime dt);
 	void Update(DeltaTime dt);
 	void Render();
+
+	bool InsideView(sf::FloatRect);
 };

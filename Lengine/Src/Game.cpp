@@ -82,3 +82,13 @@ void Game::Render()
 	ecs_managers.system_manager->GetSystem<CollisionSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 	ecs_managers.system_manager->GetSystem<ProjColSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 }
+
+bool Game::InsideView(sf::FloatRect rect)
+{
+	if (rect.left > camera_manager.GetViewBounds().left + camera_manager.GetViewBounds().width ||
+		rect.top > camera_manager.GetViewBounds().top + camera_manager.GetViewBounds().height ||
+		rect.left + rect.width < camera_manager.GetViewBounds().left ||
+		rect.top + rect.height < camera_manager.GetViewBounds().top)
+		return false;
+	return true;
+}

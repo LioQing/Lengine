@@ -46,7 +46,9 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 	for (auto& e : entity_manager->EntityFilter<ColliderComponent>().entities)
 	{
 		ColliderComponent* col = &e->GetComponent<ColliderComponent>();
-		col->UpdateBox();
+		col->box.setPosition((col->position + col->offset).sfVector2f());
+
+		if (!game->InsideView(col->box.getGlobalBounds())) continue;
 		window->draw(col->box);
 	}
 
@@ -55,7 +57,9 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 		for (auto& boundary_col : e2->GetComponent<BoundaryComponent>().boundaries)
 		{
 			if (boundary_col == nullptr) continue;
-			boundary_col->UpdateBox();
+			boundary_col->box.setPosition((boundary_col->position + boundary_col->offset).sfVector2f());
+
+			if (!game->InsideView(boundary_col->box.getGlobalBounds())) continue;
 			window->draw(boundary_col->box);
 		}
 	}

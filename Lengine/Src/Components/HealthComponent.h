@@ -9,6 +9,8 @@ struct HealthComponent : public lecs::Component
 	float max_hp;
 	float hp;
 
+	const Vector2Df size = { 36.f, 4.f }; // default size
+
 	Vector2Df offset = Vector2Df::Zero();
 
 	sf::RectangleShape bar;

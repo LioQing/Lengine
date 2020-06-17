@@ -188,12 +188,12 @@ public:
 		return std::sqrt(SqrMagnitude());
 	}
 
-	Vec2 Abs()
+	Vec2 Abs() const
 	{
 		return Vec2(x < 0 ? x * -1 : x, y < 0 ? y * -1 : y);
 	}
 
-	double Degree(bool flipYAxis = false)
+	double Degree(bool flipYAxis = false) const
 	{
 		T tmp = this->y;
 		if (flipYAxis) tmp *= -1;
@@ -321,20 +321,20 @@ public:
 	}
 
 	template <typename T>
-	Vec2<T> Cast()
+	Vec2<T> Cast() const
 	{
 		return Vec2<T>(x, y);
 	}
 
-	sf::Vector2f sfVector2f()
+	sf::Vector2f sfVector2f() const
 	{
 		return sf::Vector2f(x, y);
 	}
-	sf::Vector2i sfVector2i()
+	sf::Vector2i sfVector2i() const
 	{
 		return sf::Vector2i(x, y);
 	}
-	sf::Vector2u sfVector2u()
+	sf::Vector2u sfVector2u() const
 	{
 		return sf::Vector2f(x, y);
 	}

@@ -64,15 +64,7 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 			SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
 
 			// off screen no draw
-			if (
-				sprite->sprite.getGlobalBounds().left > game->camera_manager.GetViewBounds().left + game->camera_manager.GetViewBounds().width ||
-				sprite->sprite.getGlobalBounds().top > game->camera_manager.GetViewBounds().top + game->camera_manager.GetViewBounds().height ||
-				sprite->sprite.getGlobalBounds().left + sprite->sprite.getGlobalBounds().width < game->camera_manager.GetViewBounds().left ||
-				sprite->sprite.getGlobalBounds().top + sprite->sprite.getGlobalBounds().height < game->camera_manager.GetViewBounds().top
-				)
-			{
-				continue;
-			}
+			if (!game->InsideView(sprite->sprite.getGlobalBounds())) continue;
 
 			// insert
 			draw_order.push_back(sprite);

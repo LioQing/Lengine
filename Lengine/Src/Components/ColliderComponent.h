@@ -38,5 +38,5 @@ struct ColliderComponent : public lecs::Component
 	void SetOffset(Vector2Df offset);
 	void SetPosition(Vector2Df pos);
 
-	void UpdateBox();
+	void InitBox();
 };
