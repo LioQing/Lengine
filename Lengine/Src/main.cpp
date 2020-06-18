@@ -13,7 +13,7 @@ int main()
     sf::Clock delta_clock;
 
     sf::RenderWindow window(sf::VideoMode(800, 640), "Lengine");
-    window.setFramerateLimit(0);
+    window.setFramerateLimit(60);
 
     game = new Game(window);
     game->Init();

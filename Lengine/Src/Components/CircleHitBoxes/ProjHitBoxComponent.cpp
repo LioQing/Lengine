@@ -1,13 +1,17 @@
 #include "ProjHitBoxComponent.h"
 
+#include <cmath>
+
 ProjHitBoxComponent::ProjHitBoxComponent(float r) : radius(r)
 {
 	InitCircle();
 }
 
-ProjHitBoxComponent::ProjHitBoxComponent(float r, float x) : radius(r), x_offset(x)
+ProjHitBoxComponent::ProjHitBoxComponent(float r, float x_offset, float angle) : radius(r)
 {
 	InitCircle();
+	offset = Vector2Df(x_offset * cosf(angle * M_PI / 180), x_offset * sinf(angle * M_PI / 180));
+	std::cout << angle << std::endl;
 }
 
 void ProjHitBoxComponent::InitCircle()

@@ -94,14 +94,14 @@ namespace spawn
 				sprite->sprite.getTextureRect().width * game->world_scale.x, 
 				0.f
 			),
-			65.f);
+			75.f);
 
 		game->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_ITEM);
 
 		return item;
 	}
 
-	inline lecs::Entity* Projectile(Vector2Df position, float speed, float decay, float radius, float angle = 0.f) // temporary for testing
+	inline lecs::Entity* Projectile(Vector2Df position, float speed, float decay, float radius, float hitbox_off, float angle = 0.f) // temporary for testing
 	{
 		lecs::Entity* projectile = &game->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &projectile->AddComponent<SpriteComponent>("bullet");
@@ -112,7 +112,7 @@ namespace spawn
 		transform->speed = speed;
 		if (angle > 90 && angle < 270 || angle < -90 && angle > -270) transform->scale.y = fabsf(transform->scale.y) * -1;
 		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle, decay);
-		ProjHitBoxComponent* phb = &projectile->AddComponent<ProjHitBoxComponent>(radius);
+		ProjHitBoxComponent* phb = &projectile->AddComponent<ProjHitBoxComponent>(radius, hitbox_off, angle);
 
 		game->ecs_managers.entity_manager->AddToGroup(projectile, lecs::GRP_ENTITY);
 

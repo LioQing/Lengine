@@ -50,7 +50,7 @@ void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 			auto* phb = &proj->GetComponent<ProjHitBoxComponent>();
 			auto* transform = &proj->GetComponent<TransformComponent>();
 
-			phb->circle.setPosition(transform->position.sfVector2f());
+			phb->circle.setPosition((transform->position + phb->offset).sfVector2f());
 
 			if (!game->InsideView(phb->circle.getGlobalBounds())) continue;
 			window->draw(phb->circle);
