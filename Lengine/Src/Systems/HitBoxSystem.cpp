@@ -15,8 +15,10 @@ void HitBoxSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventM
 		auto* phb = &proj->GetComponent<ProjHitBoxComponent>();
 		auto* transform = &proj->GetComponent<TransformComponent>();
 
-		for (auto& body : entity_manager->EntityFilter<BodyHitBoxComponent>().entities)
+		for (auto& body : entity_manager->EntityFilter<BodyHitBoxComponent>().EntityFilter<HealthComponent>().entities)
 		{
+			if (body->GetComponent<HealthComponent>().is_dead) continue;
+
 			TransformComponent* hTransform = &body->GetComponent<TransformComponent>();
 
 			if (body->HasComponent<HeadHitBoxComponent>())

@@ -21,6 +21,16 @@ void HealthSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManage
 		hp->bar.setPosition((transform->position + hp->offset - Vector2Df(hp->size.x / 2, 0.f)).sfVector2f());
 		hp->bar.setSize(Vector2Df(hp->size.x * hp->hp / hp->max_hp, hp->size.y).sfVector2f());
 		hp->bar_frame.setPosition((transform->position + hp->offset - Vector2Df(hp->size.x / 2, 0.f)).sfVector2f());
+
+		if (hp->is_dead && ch->HasComponent<AnimationComponent>())
+		{
+			AnimationComponent* anim = &ch->GetComponent<AnimationComponent>();
+			
+			if (anim->animations.count("dead"))
+			{
+				anim->SetCurrent("dead");
+			}
+		}
 	}
 }
 
@@ -29,6 +39,8 @@ void HealthSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 	for (auto& ch : entity_manager->EntityFilter<HealthComponent>().entities)
 	{
 		HealthComponent* hp = &ch->GetComponent<HealthComponent>();
+
+		if (hp->is_dead) continue;
 
 		if (!game->InsideView(hp->bar_frame.getGlobalBounds())) continue;
 		window->draw(hp->bar_frame);
@@ -46,7 +58,9 @@ void HealthSystem::Receive(lecs::Event& event)
 		
 		if (hbev.hitbox->HasComponent<HealthComponent>())
 		{
-			hbev.hitbox->GetComponent<HealthComponent>().hp -= 2 + 2 * hbev.ishead;
+			HealthComponent* hp = &hbev.hitbox->GetComponent<HealthComponent>();
+
+			hp->TakeDamage(2 + 2 * hbev.ishead);
 		}
 	}
 }

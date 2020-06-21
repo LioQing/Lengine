@@ -16,3 +16,14 @@ void HealthComponent::SetHealthBar(Vector2Df off)
 {
 	offset = off;
 }
+
+void HealthComponent::TakeDamage(float dmg)
+{
+	hp -= dmg;
+
+	if (hp <= 0)
+	{
+		hp = 0.f;
+		is_dead = true;
+	}
+}

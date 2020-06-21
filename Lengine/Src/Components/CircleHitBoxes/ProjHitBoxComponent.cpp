@@ -11,7 +11,6 @@ ProjHitBoxComponent::ProjHitBoxComponent(float r, float x_offset, float angle) :
 {
 	InitCircle();
 	offset = Vector2Df(x_offset * cosf(angle * M_PI / 180), x_offset * sinf(angle * M_PI / 180));
-	std::cout << angle << std::endl;
 }
 
 void ProjHitBoxComponent::InitCircle()

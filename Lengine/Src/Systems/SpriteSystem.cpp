@@ -39,11 +39,7 @@ void SpriteSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMa
 			}
 			else
 			{
-				game->logger->AddLog
-				(
-					"Error: Animation Component current animation delay is 0, cannot divide by 0",
-					lecs::LT_ERROR, lecs::LT_COMPONENT
-				);
+				srcRect.left = 0;
 			}
 			srcRect.top = animation->current.index * transform->height;
 

@@ -148,6 +148,10 @@ namespace spawn
 		TransformComponent* transform = &enemy->AddComponent<TransformComponent>(position, 32, 32, game->world_scale, 4.f);
 		ColliderComponent* collider = &enemy->AddComponent<ColliderComponent>(4 * game->world_scale.x, 16 * game->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game->world_scale + Vector2Df(0.f, transform->height));
+		AnimationComponent* animation = &enemy->AddComponent<AnimationComponent>();
+		animation->AddAnimation("idle", 0, 2, 300);
+		animation->AddAnimation("walk", 1, 8, 100);
+		animation->AddAnimation("dead", 2, 1, 0);
 		BodyHitBoxComponent* bdhb = &enemy->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
 		HeadHitBoxComponent* hhb = &enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
 		HealthComponent* hp = &enemy->AddComponent<HealthComponent>(100.f);

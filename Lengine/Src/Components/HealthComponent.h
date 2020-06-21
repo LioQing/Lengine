@@ -9,6 +9,8 @@ struct HealthComponent : public lecs::Component
 	float max_hp;
 	float hp;
 
+	bool is_dead = false;
+
 	const Vector2Df size = { 36.f, 4.f }; // default size
 
 	Vector2Df offset = Vector2Df::Zero();
@@ -19,4 +21,5 @@ struct HealthComponent : public lecs::Component
 	HealthComponent(float max);
 
 	void SetHealthBar(Vector2Df off);
+	void TakeDamage(float dmg);
 };
