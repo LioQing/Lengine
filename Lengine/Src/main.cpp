@@ -1,11 +1,12 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <atomic>
 
 #include "Components/Components.h"
 #include "Game.h"
 
-Game* game;
+std::atomic<Game*> game;
 
 int main()
 {
@@ -16,17 +17,22 @@ int main()
     window.setFramerateLimit(60);
 
     game = new Game(window);
-    game->Init();
+    game.load()->Init();
 
     while (window.isOpen())
     {
-        game->HandleInput(delta_time);
-        game->Update(delta_time);
+        game.load()->HandleInput(delta_time);
+        game.load()->Update(delta_time);
         // if (delta_time != 0) std::cout << 1000/delta_time << std::endl;
 
         window.clear();
-        game->Render();
+        game.load()->Render();
         window.display();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+        {
+            std::cout << "break pt. toggled" << std::endl;
+        }
 
         delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
     }

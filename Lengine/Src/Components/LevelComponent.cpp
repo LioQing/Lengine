@@ -198,7 +198,7 @@ void LevelComponent::GenStatics(int lower_num, int upper_num, int tile_size, lec
 			if (cnt <= 1)
 			{
 				static_layer.At(position.x, position.y) = 1;
-				spawn::StaticObject(position.Cast<float>() * game->world_scale * tile_size, tile_size, statics.at(rand() % statics.size()));
+				spawn::StaticObject(position.Cast<float>() * game.load()->world_scale * tile_size, tile_size, statics.at(rand() % statics.size()));
 			}
 		}
 	}
@@ -242,7 +242,7 @@ void LevelComponent::GenStair(int tile_size)
 				case 3: texture_id += "left"; break;
 				default: break;
 			}
-			spawn::Staircase(m_position.Cast<float>() * game->world_scale * tile_size, texture_id);
+			spawn::Staircase(m_position.Cast<float>() * game.load()->world_scale * tile_size, texture_id);
 
 			return;
 		}

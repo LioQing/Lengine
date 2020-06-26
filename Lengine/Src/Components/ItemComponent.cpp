@@ -6,7 +6,7 @@
 #include "TransformComponent.h"
 #include "../Game.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 ItemComponent::ItemComponent(lecs::Entity* item, bool follow_transform)
 	: center(Vector2Df(0.0f, 0.0f)), radius(0.0f), follow_transform(follow_transform)

@@ -3,7 +3,7 @@
 #include "../Game.h"
 #include "../Components/Components.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void ProjectileSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
@@ -11,7 +11,7 @@ void ProjectileSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::Ev
 	{
 		if (!e->HasComponent<TransformComponent>())
 		{
-			game->logger->AddLog
+			game.load()->logger->AddLog
 			(
 				"Error: Entity " + std::to_string(e->id) + " doesn't have Transform Component for Projectile Component",
 				lecs::LT_ENTITY, lecs::LT_COMPONENT, lecs::LT_ERROR

@@ -2,7 +2,7 @@
 
 #include "../Game.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 ProjColComponent::ProjColComponent(Vector2Df position, uint32_t height, uint32_t width)
 	: position(position), height(height), width(width), fitTransform(false), followTransform(false), isKinematic(false)

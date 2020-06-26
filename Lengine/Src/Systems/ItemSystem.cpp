@@ -4,7 +4,7 @@
 #include "../Game.h"
 #include "../Components/Components.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void ItemSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
@@ -17,7 +17,7 @@ void ItemSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventMan
 		{
 			if (!e->HasComponent<TransformComponent>())
 			{
-				game->logger->AddLog
+				game.load()->logger->AddLog
 				(
 					"Error: Entity " + std::to_string(e->id) + " doesn't have Transform Component for item",
 					lecs::LT_ERROR, lecs::LT_ENTITY, lecs::LT_COMPONENT
@@ -56,7 +56,7 @@ void ItemSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMana
 
 			if (gun->ready && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				Vector2Df position = game->input_manager.world_mouse_pos - item->center;
+				Vector2Df position = game.load()->input_manager.world_mouse_pos - item->center;
 				float rad = atan2f(position.y, position.x);
 
 				float tmp_y_pos = gun->muzzle_pos.y;
@@ -80,7 +80,7 @@ void ItemSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager*
 	{
 		ItemComponent* item = &e->GetComponent<ItemComponent>();
 
-		if (e->HasGroup(lecs::GRP_PLAYER)) item->RenderSprite(game->input_manager.world_mouse_pos - item->center);
+		if (e->HasGroup(lecs::GRP_PLAYER)) item->RenderSprite(game.load()->input_manager.world_mouse_pos - item->center);
 		else item->RenderSprite();
 	}
 }

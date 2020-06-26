@@ -3,7 +3,7 @@
 #include "../Game.h"
 #include "../Components/Components.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void SpriteSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
@@ -60,7 +60,7 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 			SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
 
 			// off screen no draw
-			if (!game->InsideView(sprite->sprite.getGlobalBounds())) continue;
+			if (!game.load()->InsideView(sprite->sprite.getGlobalBounds())) continue;
 
 			// insert
 			draw_order.push_back(sprite);

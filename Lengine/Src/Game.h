@@ -5,8 +5,11 @@
 #include <lecs.h>
 #include <vector>
 #include <future>
+#include <memory>
 
 #include "Managers/Managers.h"
+
+class AIManager;
 
 class Game
 {
@@ -25,6 +28,8 @@ public:
 	TextureManager texture_manager;
 	CameraManager camera_manager;
 	InputManager input_manager;
+
+	AIManager* ai_manager; // ai manager class is same level as game class
 
 	Game(sf::RenderWindow& window);
 

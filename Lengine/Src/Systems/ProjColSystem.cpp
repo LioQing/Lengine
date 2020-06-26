@@ -4,7 +4,7 @@
 
 #include "../Game.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void ProjColSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {

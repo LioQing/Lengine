@@ -4,7 +4,7 @@
 
 #include "../Game.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 TileMapComponent::TileMapComponent(std::string texture_id, uint32_t tile_size, float scale)
 {
@@ -64,6 +64,6 @@ void TileMapComponent::AddTile(int x, int y, int src_x, int src_y, sf::Sprite* t
 {
 	tile->setPosition(x * tile_size * scale, y * tile_size * scale);
 	tile->setScale(scale + 0.005f, scale + 0.005f); // I hate this fix...
-	tile->setTexture(game->texture_manager.GetTexture(texture_id));
+	tile->setTexture(game.load()->texture_manager.GetTexture(texture_id));
 	tile->setTextureRect(sf::IntRect(src_x, src_y, tile_size, tile_size));
 }

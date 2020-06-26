@@ -4,8 +4,12 @@
 #include "Events/Events.h"
 #include "SpawnEntity.h"
 
+#include <memory>
+
 Game::Game(sf::RenderWindow& window) : window(window)
 {
+	ai_manager = new AIManager();
+
 	camera_manager.SetWindow(&window);
 
 	logger = &lecs::logger;
@@ -81,6 +85,8 @@ void Game::Render()
 	ecs_managers.system_manager->GetSystem<TileMapSystem>().LateDraw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 	ecs_managers.system_manager->GetSystem<CollisionSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 	ecs_managers.system_manager->GetSystem<ProjColSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
+
+	ai_manager->Read();
 }
 
 bool Game::InsideView(sf::FloatRect rect)

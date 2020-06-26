@@ -6,7 +6,7 @@
 #include "../Components/Components.h"
 #include "../Events/Events.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void HitBoxSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
@@ -54,7 +54,7 @@ void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 
 			phb->circle.setPosition((transform->position + phb->offset).sfVector2f());
 
-			if (!game->InsideView(phb->circle.getGlobalBounds())) continue;
+			if (!game.load()->InsideView(phb->circle.getGlobalBounds())) continue;
 			window->draw(phb->circle);
 		}
 	}
@@ -68,7 +68,7 @@ void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 
 		bdhb->circle.setPosition((transform->position + bdhb->position).sfVector2f());
 		
-		if (!game->InsideView(bdhb->circle.getGlobalBounds())) continue;
+		if (!game.load()->InsideView(bdhb->circle.getGlobalBounds())) continue;
 		window->draw(bdhb->circle);
 
 		if (!character->HasComponent<HeadHitBoxComponent>()) continue;
@@ -77,7 +77,7 @@ void HitBoxSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 
 		hhb->circle.setPosition((transform->position + hhb->position).sfVector2f());
 
-		if (!game->InsideView(hhb->circle.getGlobalBounds())) continue;
+		if (!game.load()->InsideView(hhb->circle.getGlobalBounds())) continue;
 		window->draw(hhb->circle);
 	}
 }

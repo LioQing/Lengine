@@ -4,7 +4,7 @@
 
 #include "../Game.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void CollisionSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt)
 {
@@ -16,7 +16,7 @@ void CollisionSystem::EarlyUpdate(lecs::EntityManager* entity_manager, lecs::Eve
 		{
 			if (!e->HasComponent<TransformComponent>())
 			{
-				game->logger->AddLog
+				game.load()->logger->AddLog
 				(
 					"Error: Entity " + std::to_string(e->id) + " doesn't have Transform Component for collider",
 					lecs::LT_ERROR, lecs::LT_ENTITY, lecs::LT_COMPONENT
@@ -48,7 +48,7 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 		ColliderComponent* col = &e->GetComponent<ColliderComponent>();
 		col->box.setPosition((col->position + col->offset).sfVector2f());
 
-		if (!game->InsideView(col->box.getGlobalBounds())) continue;
+		if (!game.load()->InsideView(col->box.getGlobalBounds())) continue;
 		window->draw(col->box);
 	}
 
@@ -59,7 +59,7 @@ void CollisionSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManag
 			if (boundary_col == nullptr) continue;
 			boundary_col->box.setPosition((boundary_col->position + boundary_col->offset).sfVector2f());
 
-			if (!game->InsideView(boundary_col->box.getGlobalBounds())) continue;
+			if (!game.load()->InsideView(boundary_col->box.getGlobalBounds())) continue;
 			window->draw(boundary_col->box);
 		}
 	}
@@ -128,7 +128,7 @@ void CollisionSystem::SubUpdate(lecs::Entity* e1, lecs::EntityManager* entity_ma
 
 	if (!e1->HasComponent<TransformComponent>())
 	{
-		game->logger->AddLog
+		game.load()->logger->AddLog
 		(
 			"Error: Entity " + std::to_string(e1->id) + " doesn't have Transform Component for collision resolve",
 			lecs::LT_ERROR, lecs::LT_ENTITY, lecs::LT_COMPONENT

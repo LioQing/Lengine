@@ -4,7 +4,7 @@
 #include "../Components/Components.h"
 #include "../Events/Events.h"
 
-extern Game* game;
+extern std::atomic<Game*> game;
 
 void HealthSystem::Init(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, lecs::SystemManager* system_manager)
 {
@@ -42,10 +42,10 @@ void HealthSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 
 		if (hp->is_dead) continue;
 
-		if (!game->InsideView(hp->bar_frame.getGlobalBounds())) continue;
+		if (!game.load()->InsideView(hp->bar_frame.getGlobalBounds())) continue;
 		window->draw(hp->bar_frame);
 
-		if (!game->InsideView(hp->bar.getGlobalBounds())) continue;
+		if (!game.load()->InsideView(hp->bar.getGlobalBounds())) continue;
 		window->draw(hp->bar);
 	}
 }
