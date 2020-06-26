@@ -6,10 +6,9 @@
 
 void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
-	for (auto& e : entity_manager->GetGroup(lecs::GRP_PLAYER).EntityFilter<TransformComponent>().EntityFilter<SpriteComponent>().entities)
+	for (auto& e : entity_manager->GetGroup(lecs::GRP_PLAYER).EntityFilter<TransformComponent>().entities)
 	{
 		TransformComponent* transform = &e->GetComponent<TransformComponent>();
-		SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
 
 		// y axis movement
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !sf::Keyboard::isKeyPressed(sf::Keyboard::S))

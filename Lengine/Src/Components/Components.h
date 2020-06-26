@@ -11,6 +11,7 @@
 #include "LevelComponent.h"
 #include "ProjColComponent.h"
 #include "HealthComponent.h"
+#include "AIComponent.h"
 
 #include "Items/GunComponent.h"
 

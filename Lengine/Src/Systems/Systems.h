@@ -9,3 +9,5 @@
 #include "ProjColSystem.h"
 #include "HitBoxSystem.h"
 #include "HealthSystem.h"
+
+#include "AISystems/AIMovementSystem.h"

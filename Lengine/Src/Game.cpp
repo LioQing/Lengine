@@ -33,6 +33,7 @@ void Game::Init()
 	ecs_managers.system_manager->AddSystem<ProjColSystem>();
 	ecs_managers.system_manager->AddSystem<HitBoxSystem>();
 	ecs_managers.system_manager->AddSystem<HealthSystem>();
+	ecs_managers.system_manager->AddSystem<AIMovementSystem>();
 
 	// spawns
 	lecs::Entity* map = spawn::Map();

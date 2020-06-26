@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Components\AIComponent.cpp" />
     <ClCompile Include="Src\Components\AnimationComponent.cpp" />
     <ClCompile Include="Src\Components\BoundaryComponent.cpp" />
     <ClCompile Include="Src\Components\CircleHitBoxes\BodyHitBoxComponent.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Src\Managers\CameraManager.cpp" />
     <ClCompile Include="Src\Managers\InputManager.cpp" />
     <ClCompile Include="Src\Managers\TextureManager.cpp" />
+    <ClCompile Include="Src\Systems\AISystems\AIMovementSystem.cpp" />
     <ClCompile Include="Src\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Src\Systems\HealthSystem.cpp" />
     <ClCompile Include="Src\Systems\HitBoxSystem.cpp" />
@@ -181,6 +183,7 @@
     <ClInclude Include="PersonalUtils\lecs.h" />
     <ClInclude Include="PersonalUtils\Matrix.h" />
     <ClInclude Include="PersonalUtils\Vector2D.h" />
+    <ClInclude Include="Src\Components\AIComponent.h" />
     <ClInclude Include="Src\Components\AnimationComponent.h" />
     <ClInclude Include="Src\Components\BoundaryComponent.h" />
     <ClInclude Include="Src\Components\CircleHitBoxes\BodyHitBoxComponent.h" />
@@ -207,6 +210,7 @@
     <ClInclude Include="Src\Managers\Managers.h" />
     <ClInclude Include="Src\Managers\TextureManager.h" />
     <ClInclude Include="Src\SpawnEntity.h" />
+    <ClInclude Include="Src\Systems\AISystems\AIMovementSystem.h" />
     <ClInclude Include="Src\Systems\CollisionSystem.h" />
     <ClInclude Include="Src\Systems\HealthSystem.h" />
     <ClInclude Include="Src\Systems\HitBoxSystem.h" />

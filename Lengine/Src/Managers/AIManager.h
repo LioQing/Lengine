@@ -6,7 +6,7 @@
 #include <atomic>
 
 #include "../Game.h"
-#include "AIHandle.h"
+#include "../Components/Components.h"
 
 class Game;
 
@@ -14,7 +14,7 @@ class AIManager
 {
 private:
 
-	std::vector<std::shared_ptr<AIHandle>> enemies;
+	std::vector<AIComponent*> enemies;
 
 	std::thread ai_thread;
 	std::atomic<bool> process_finished;
@@ -23,7 +23,7 @@ public:
 
 	AIManager();
 
-	void AddEnemy(uint32_t id);
+	void AddEnemy(AIComponent* c);
 
 	void Read();
 

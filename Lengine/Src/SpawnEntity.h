@@ -156,11 +156,12 @@ namespace spawn
 		HeadHitBoxComponent* hhb = &enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
 		HealthComponent* hp = &enemy->AddComponent<HealthComponent>(100.f);
 		hp->SetHealthBar({ 0.f, -32.f });
+		AIComponent* ai = &enemy->AddComponent<AIComponent>();
 
 		game.load()->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENTITY);
 		game.load()->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENEMY);
 
-		game.load()->ai_manager->AddEnemy(enemy->id);
+		game.load()->ai_manager->AddEnemy(ai);
 
 		return enemy;
 	}
