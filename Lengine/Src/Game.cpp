@@ -5,7 +5,7 @@
 #include "SpawnEntity.h"
 
 #include <memory>
-
+lecs::Entity* player;
 Game::Game(sf::RenderWindow& window) : window(window)
 {
 	ai_manager = new AIManager();
@@ -39,8 +39,8 @@ void Game::Init()
 	lecs::Entity* map = spawn::Map();
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x, map->GetComponent<LevelComponent>().rooms.at(0).center.y) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
-	lecs::Entity* player = spawn::Player(spawn_pos);
-	lecs::Entity* enemy = spawn::Enemy(spawn_pos);
+	player = spawn::Player(spawn_pos);
+	lecs::Entity* enemy = spawn::Enemy(spawn_pos, 0);
 
 	// camera
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
@@ -50,6 +50,10 @@ void Game::Init()
 	//HitBoxSystem* hb_system = &ecs_managers.system_manager->GetSystem<HitBoxSystem>();
 	//hb_system->draw_characters = true;
 	//hb_system->draw_proj = true;
+
+	// read map
+	ai_manager->ReadMap();
+	ai_manager->StartProcess();
 }
 
 void Game::HandleInput(DeltaTime dt)
@@ -66,6 +70,7 @@ void Game::HandleInput(DeltaTime dt)
 
 void Game::Update(DeltaTime dt)
 {
+	//std::cout << "P: " << player->GetComponent<TransformComponent>().position.x << ", " << player->GetComponent<TransformComponent>().position.y << " ";
 	ecs_managers.system_manager->GetSystem<MovementSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 	ecs_managers.system_manager->GetSystem<ItemSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);
 	ecs_managers.system_manager->GetSystem<ProjectileSystem>().EarlyUpdate(ecs_managers.entity_manager, ecs_managers.event_manager, dt);

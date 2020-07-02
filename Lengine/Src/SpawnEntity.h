@@ -141,7 +141,7 @@ namespace spawn
 		return player;
 	}
 
-	inline lecs::Entity* Enemy(Vector2Df position)
+	inline lecs::Entity* Enemy(Vector2Df position, int room)
 	{
 		lecs::Entity* enemy = &game.load()->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = &enemy->AddComponent<SpriteComponent>("enemy", Vector2Df(16.f, 16.f));
@@ -156,7 +156,7 @@ namespace spawn
 		HeadHitBoxComponent* hhb = &enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
 		HealthComponent* hp = &enemy->AddComponent<HealthComponent>(100.f);
 		hp->SetHealthBar({ 0.f, -32.f });
-		AIComponent* ai = &enemy->AddComponent<AIComponent>();
+		AIComponent* ai = &enemy->AddComponent<AIComponent>(room);
 
 		game.load()->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENTITY);
 		game.load()->ecs_managers.entity_manager->AddToGroup(enemy, lecs::GRP_ENEMY);

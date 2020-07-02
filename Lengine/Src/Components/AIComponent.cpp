@@ -1,6 +1,6 @@
 #include "AIComponent.h"
 
-AIComponent::AIComponent() 
+AIComponent::AIComponent(int room) : room(room)
 {
-	movement.store(new Vector2Di());
+	movement.store(new Vector2Df(0.f, 0.f));
 }

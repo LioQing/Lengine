@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PersonalUtils\CSVReader.h" />
+    <ClInclude Include="PersonalUtils\lcs.h" />
     <ClInclude Include="PersonalUtils\lecs.h" />
     <ClInclude Include="PersonalUtils\Matrix.h" />
     <ClInclude Include="PersonalUtils\Vector2D.h" />

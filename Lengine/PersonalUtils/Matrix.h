@@ -66,6 +66,7 @@ public:
 	}
 	T At(uint32_t x, uint32_t y) const
 	{
+		if (x > width || y > height) return 0;
 		return matrix.at(y).at(x);
 	}
 
@@ -118,6 +119,22 @@ public:
 				At(ax, ay) = val;
 			}
 		}
+	}
+
+	Matrix operator+(const Matrix& m)
+	{
+		int w = std::max(this->width, m.width), h = std::max(this->height, m.height);
+		Matrix<T> matrix(w, h, 0);
+
+		for (int x = 0; x < w; ++x)
+		{
+			for (int y = 0; y < h; ++y)
+			{
+				matrix.At(x, y) = this->At(x, y) + m.At(x, y);
+			}
+		}
+
+		return matrix;
 	}
 };
 

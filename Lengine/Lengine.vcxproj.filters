@@ -242,5 +242,8 @@
     <ClInclude Include="Src\Components\AIComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PersonalUtils\lcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
