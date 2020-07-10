@@ -13,6 +13,9 @@ struct AIComponent : lecs::Component
 
 	std::list<Vector2Di> path;
 	Vector2Di current_path;
+	Vector2Di* ended_path = nullptr;
 
 	AIComponent(int room);
+
+	void Dead();
 };

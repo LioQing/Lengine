@@ -72,19 +72,50 @@ void AIManager::AIProcess()
 {
     lecs::EntityManager* entity_man = game.load()->ecs_managers.entity_manager;
 
+    auto DebugMap = [&](AIComponent* e) 
+    { 
+        lcs.FullFill(' ', BG_BLACK);
+        for (int x = 0; x < map.width; ++x)
+        {
+            for (int y = 0; y < map.height; ++y)
+            {
+                if (nodes[y * map.width + x].isObstacle)
+                {
+                    lcs.Draw(x, y, PIXEL_SOLID);
+                }
+            }
+        }
+        for (auto& p : e->path)
+        {
+            lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
+        }
+        lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
+        lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
+        lcs.Display();
+    };
+
+    // main process
 	for (;;)
 	{
 		while (process_finished == true) {}
 
 		for (auto& e : enemies)
 		{
-            TransformComponent* transform = &entity_man->GetEntity(e->entity).GetComponent<TransformComponent>();
+            lecs::Entity* enemy = &entity_man->GetEntity(e->entity);
+            TransformComponent* transform = &enemy->GetComponent<TransformComponent>();
 
+            if (enemy->GetComponent<HealthComponent>().is_dead)
+            {
+                e->Dead();
+                continue;
+            }
+            
             if (e->path.empty())
             {
                 // initialize the path
                 SetDest(e, transform);
                 SolveAStar();
+                e->ended_path = nullptr;
 
                 // assign the path to ai component
                 Node* p = n_end;
@@ -93,65 +124,28 @@ void AIManager::AIProcess()
                     e->path.push_front(Vector2Di(p->pos.x, p->pos.y));
                     p = p->parent;
                 }
-
-                // set start dest
-                if (!e->path.empty())
-                {
-                    e->current_path = e->path.front();
-                }
-
-                // debug
-                lcs.FullFill(' ', BG_BLACK);
-                for (int x = 0; x < map.width; ++x)
-                {
-                    for (int y = 0; y < map.height; ++y)
-                    {
-                        if (nodes[y * map.width + x].isObstacle)
-                        {
-                            lcs.Draw(x, y, PIXEL_SOLID);
-                        }
-                    }
-                }
-                for (auto& p : e->path)
-                {
-                    lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
-                }
-                lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
-                lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
-                lcs.Display();
-
             }
-            else
+
+            // set dest
+            if (!e->path.empty() && e->current_path != e->path.front())
+                e->current_path = e->path.front();
+
+            // movement
+            Vector2Df scaled_dest = Vector2Df((e->current_path.x * 32 + 16) * game.load()->world_scale.x, e->current_path.y * 32 * game.load()->world_scale.y);
+            e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
+
+            // check arrived to pop
+            if ((scaled_dest - transform->position).Magnitude() <= transform->speed)
             {
-                Vector2Df scaled_dest = Vector2Df((e->current_path.x * 32 + 16) * game.load()->world_scale.x, e->current_path.y * 32 * game.load()->world_scale.y);
-                e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
-
-                if ((scaled_dest - transform->position).Magnitude() <= transform->speed)
+                if (e->path.size() == 1)
                 {
-                    e->path.pop_front();
+                    e->ended_path = new Vector2Di(e->path.front());
                 }
-                if (!e->path.empty()) e->current_path = e->path.front();
-
-                // debug
-                lcs.FullFill(' ', BG_BLACK);
-                for (int x = 0; x < map.width; ++x)
-                {
-                    for (int y = 0; y < map.height; ++y)
-                    {
-                        if (nodes[y * map.width + x].isObstacle)
-                        {
-                            lcs.Draw(x, y, PIXEL_SOLID);
-                        }
-                    }
-                }
-                for (auto& p : e->path)
-                {
-                    lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
-                }
-                lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
-                lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
-                lcs.Display();
+                e->path.pop_front();
             }
+
+            // debug
+            //DebugMap(e);
 		}
 
 		process_finished = true;
@@ -163,7 +157,11 @@ void AIManager::SetDest(AIComponent* e, TransformComponent* transform)
     // set start position
     Vector2Di start_pos;
 
-    start_pos = (transform->position / 32 / game.load()->world_scale).Cast<int>();
+    if (e->ended_path)
+        start_pos = *e->ended_path;
+    else
+        start_pos = (transform->position / 32 / game.load()->world_scale).Cast<int>();
+
     n_start = &nodes[start_pos.y * map.width + start_pos.x];
 
     // set end position
