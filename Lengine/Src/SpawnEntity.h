@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lecs.h>
+#include <cstdint>
 
 #include "Components/Components.h"
 #include "Game.h"
@@ -111,7 +112,7 @@ namespace spawn
 			sprite->sprite.getTextureRect().height, game.load()->world_scale);
 		transform->speed = speed;
 		if (angle > 90 && angle < 270 || angle < -90 && angle > -270) transform->scale.y = fabsf(transform->scale.y) * -1;
-		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(angle, decay);
+		ProjectileComponent* projectileC = &projectile->AddComponent<ProjectileComponent>(position, angle, decay);
 		ProjHitBoxComponent* phb = &projectile->AddComponent<ProjHitBoxComponent>(radius, hitbox_off, angle);
 
 		game.load()->ecs_managers.entity_manager->AddToGroup(projectile, lecs::GRP_ENTITY);

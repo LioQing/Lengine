@@ -12,7 +12,9 @@ struct ProjectileComponent : public lecs::Component
 	float decay;
 	float decay_timer = 0.f;
 
-	ProjectileComponent(float rotation, float decay);
+	Vector2Df start_pos;
+
+	ProjectileComponent(Vector2Df start_pos, float rotation, float decay);
 
 	void SetHitScanRadius(float r);
 };
