@@ -1,4 +1,4 @@
 TODO list:
 
-- Rework projectiles wall hit collision
+- AI guns
 - AI shooting

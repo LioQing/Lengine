@@ -8,6 +8,7 @@ extern std::atomic<Game*> game;
 
 void ProjColSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window)
 {
+	if (!draw) return;
 	for (auto& e : entity_manager->EntityFilter<ProjColComponent>().entities)
 	{
 		ProjColComponent* col = &e->GetComponent<ProjColComponent>();

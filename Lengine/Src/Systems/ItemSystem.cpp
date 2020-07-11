@@ -54,7 +54,7 @@ void ItemSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMana
 				}
 			}
 
-			if (gun->ready && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			if (e->HasGroup(lecs::GRP_PLAYER) && gun->ready && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
 				Vector2Df position = game.load()->input_manager.world_mouse_pos - item->center;
 				float rad = atan2f(position.y, position.x);
@@ -81,6 +81,6 @@ void ItemSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager*
 		ItemComponent* item = &e->GetComponent<ItemComponent>();
 
 		if (e->HasGroup(lecs::GRP_PLAYER)) item->RenderSprite(game.load()->input_manager.world_mouse_pos - item->center);
-		else item->RenderSprite();
+		else if (e->HasGroup(lecs::GRP_ENEMY)) item->RenderSprite(*e->GetComponent<AIComponent>().movement.load());
 	}
 }

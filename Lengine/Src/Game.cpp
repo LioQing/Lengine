@@ -47,6 +47,7 @@ void Game::Init()
 
 	// other things for debugging
 	//ecs_managers.system_manager->GetSystem<CollisionSystem>().draw_colBox = true;
+	//ecs_managers.system_manager->GetSystem<ProjColSystem>().draw = true;
 	//HitBoxSystem* hb_system = &ecs_managers.system_manager->GetSystem<HitBoxSystem>();
 	//hb_system->draw_characters = true;
 	//hb_system->draw_proj = true;

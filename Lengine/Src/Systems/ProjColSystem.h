@@ -7,6 +7,8 @@
 
 struct ProjColSystem : public lecs::System
 {
+	bool draw;
+
 	void Update(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime dt) override;
 	void Draw(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, sf::RenderWindow* window) override;
 

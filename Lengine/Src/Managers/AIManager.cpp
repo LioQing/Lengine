@@ -135,7 +135,7 @@ void AIManager::AIProcess()
             e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
 
             // check arrived to pop
-            if ((scaled_dest - transform->position).Magnitude() <= transform->speed)
+            if ((scaled_dest - transform->position).Magnitude() <= 16 * game.load()->world_scale.x)
             {
                 if (e->path.size() == 1)
                 {
