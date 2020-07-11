@@ -145,7 +145,7 @@ void AIManager::AIProcess()
             }
 
             // debug
-            //DebugMap(e);
+            DebugMap(e);
 		}
 
 		process_finished = true;

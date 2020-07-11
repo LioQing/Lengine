@@ -7,6 +7,7 @@
 struct SpriteComponent : public lecs::Component
 {
 	sf::Sprite sprite;
+	bool draw = true;
 	float draw_order_pt;
 
 	SpriteComponent(std::string id);

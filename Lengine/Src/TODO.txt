@@ -1,4 +1,5 @@
 TODO list:
 
+- AI rotation (change to not instant)
 - AI guns
 - AI shooting

@@ -22,13 +22,21 @@ void HealthSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManage
 		hp->bar.setSize(Vector2Df(hp->size.x * hp->hp / hp->max_hp, hp->size.y).sfVector2f());
 		hp->bar_frame.setPosition((transform->position + hp->offset - Vector2Df(hp->size.x / 2, 0.f)).sfVector2f());
 
-		if (hp->is_dead && ch->HasComponent<AnimationComponent>())
+		if (hp->is_dead)
 		{
-			AnimationComponent* anim = &ch->GetComponent<AnimationComponent>();
-			
-			if (anim->animations.count("dead"))
+			if (ch->HasComponent<AnimationComponent>())
 			{
-				anim->SetCurrent("dead");
+				AnimationComponent* anim = &ch->GetComponent<AnimationComponent>();
+
+				if (anim->animations.count("dead"))
+				{
+					anim->SetCurrent("dead");
+				}
+			}
+			if (ch->HasComponent<ItemComponent>())
+			{
+				ItemComponent* item = &ch->GetComponent<ItemComponent>();
+				item->item->GetComponent<SpriteComponent>().draw = false;
 			}
 		}
 	}

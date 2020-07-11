@@ -23,6 +23,9 @@ void SpriteSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMa
 		TransformComponent* transform = &e->GetComponent<TransformComponent>();
 		SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
 
+		// if hidden no process
+		if (!sprite->draw) continue;
+
 		// scale
 		sprite->sprite.setScale(transform->scale.sfVector2f());
 
@@ -58,6 +61,9 @@ void SpriteSystem::Draw(lecs::EntityManager* entity_manager, lecs::EventManager*
 		{
 			TransformComponent* transform = &e->GetComponent<TransformComponent>();
 			SpriteComponent* sprite = &e->GetComponent<SpriteComponent>();
+
+			// if hidden no draw
+			if (!sprite->draw) continue;
 
 			// off screen no draw
 			if (!game.load()->InsideView(sprite->sprite.getGlobalBounds())) continue;

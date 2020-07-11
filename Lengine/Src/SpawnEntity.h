@@ -126,7 +126,7 @@ namespace spawn
 		ItemComponent* item = &player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = &player->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, 4.f);
-		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 16 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::PLAYER);
+		ColliderComponent* collider = &player->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 12 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::PLAYER);
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game.load()->world_scale + Vector2Df(0.f, transform->height));
 		AnimationComponent* animation = &player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
@@ -148,7 +148,7 @@ namespace spawn
 		ItemComponent* item = &enemy->AddComponent<ItemComponent>(Weapon(), 32.f, true);
 		SpriteComponent* sprite = &enemy->AddComponent<SpriteComponent>("enemy", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = &enemy->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, 4.f);
-		ColliderComponent* collider = &enemy->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 16 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);
+		ColliderComponent* collider = &enemy->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 12 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);
 		collider->SetOffset(Vector2Df(0.f, 3.f) * game.load()->world_scale + Vector2Df(0.f, transform->height));
 		AnimationComponent* animation = &enemy->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
