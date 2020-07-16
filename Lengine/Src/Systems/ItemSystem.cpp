@@ -81,6 +81,6 @@ void ItemSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager*
 		ItemComponent* item = &e->GetComponent<ItemComponent>();
 
 		if (e->HasGroup(lecs::GRP_PLAYER)) item->RenderSprite(game.load()->input_manager.world_mouse_pos - item->center);
-		else if (e->HasGroup(lecs::GRP_ENEMY)) item->RenderSprite(*e->GetComponent<AIComponent>().movement.load());
+		else if (e->HasGroup(lecs::GRP_ENEMY)) item->RenderSprite(*e->GetComponent<AIComponent>().gun_pt_dir.load());
 	}
 }

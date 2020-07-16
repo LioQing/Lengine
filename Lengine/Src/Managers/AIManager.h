@@ -43,10 +43,17 @@ public:
 	void StartProcess();
 	void AIProcess();
 
+private:
+
+	const int min_idle = 200;
+	const int max_idle = 1.5e3;
+
+	AIComponent::STATE IdleActionSelect();
+	void IdleWalking(lecs::Entity* enemy);
+	void IdleTime(lecs::Entity* enemy, DeltaTime dt);
+
 	void SetDest(AIComponent* e, TransformComponent* transform);
 	void SolveAStar();
-
-private:
 
 	Node* nodes = nullptr;
 	Node* n_start = nullptr;

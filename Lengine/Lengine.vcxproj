@@ -162,7 +162,6 @@
     <ClCompile Include="Src\Components\TransformComponent.cpp" />
     <ClCompile Include="Src\Game.cpp" />
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\Managers\AIHandle.cpp" />
     <ClCompile Include="Src\Managers\AIManager.cpp" />
     <ClCompile Include="Src\Managers\CameraManager.cpp" />
     <ClCompile Include="Src\Managers\InputManager.cpp" />
@@ -204,7 +203,6 @@
     <ClInclude Include="Src\Events\Events.h" />
     <ClInclude Include="Src\Events\HitBoxEvent.h" />
     <ClInclude Include="Src\Game.h" />
-    <ClInclude Include="Src\Managers\AIHandle.h" />
     <ClInclude Include="Src\Managers\AIManager.h" />
     <ClInclude Include="Src\Managers\CameraManager.h" />
     <ClInclude Include="Src\Managers\InputManager.h" />

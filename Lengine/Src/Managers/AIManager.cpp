@@ -5,7 +5,7 @@
 
 extern std::atomic<Game*> game;
 
-LConsoleScreen lcs;
+//LConsoleScreen lcs; // for debug
 
 AIManager::AIManager()
 {
@@ -60,7 +60,7 @@ void AIManager::ReadMap()
     }
 
     rooms = lvl->rooms;
-    lcs.Init(map.width, map.height, 16);
+    //lcs.Init(map.width, map.height, 16);
 }
 
 void AIManager::StartProcess()
@@ -72,27 +72,31 @@ void AIManager::AIProcess()
 {
     lecs::EntityManager* entity_man = game.load()->ecs_managers.entity_manager;
 
-    auto DebugMap = [&](AIComponent* e) 
-    { 
-        lcs.FullFill(' ', BG_BLACK);
-        for (int x = 0; x < map.width; ++x)
-        {
-            for (int y = 0; y < map.height; ++y)
-            {
-                if (nodes[y * map.width + x].isObstacle)
-                {
-                    lcs.Draw(x, y, PIXEL_SOLID);
-                }
-            }
-        }
-        for (auto& p : e->path)
-        {
-            lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
-        }
-        lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
-        lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
-        lcs.Display();
-    };
+    //auto DebugMap = [&](AIComponent* e) 
+    //{ 
+    //    lcs.FullFill(' ', BG_BLACK);
+    //    for (int x = 0; x < map.width; ++x)
+    //    {
+    //        for (int y = 0; y < map.height; ++y)
+    //        {
+    //            if (nodes[y * map.width + x].isObstacle)
+    //            {
+    //                lcs.Draw(x, y, PIXEL_SOLID);
+    //            }
+    //        }
+    //    }
+    //    for (auto& p : e->path)
+    //    {
+    //        lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
+    //    }
+    //    lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
+    //    lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
+    //    lcs.Display();
+    //};
+
+    // ai clock
+    DeltaTime delta_time = 0u;
+    sf::Clock delta_clock;
 
     // main process
 	for (;;)
@@ -102,54 +106,137 @@ void AIManager::AIProcess()
 		for (auto& e : enemies)
 		{
             lecs::Entity* enemy = &entity_man->GetEntity(e->entity);
-            TransformComponent* transform = &enemy->GetComponent<TransformComponent>();
 
+            // update gun pt dir
+            if (*e->movement.load() != Vector2Df::Zero())
+            {
+                e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
+            }
+
+            // if dead no action
             if (enemy->GetComponent<HealthComponent>().is_dead)
             {
                 e->Dead();
                 continue;
             }
             
-            if (e->path.empty())
+            // gen idle action
+            if (!e->state)
             {
-                // initialize the path
-                SetDest(e, transform);
-                SolveAStar();
-                e->ended_path = nullptr;
-
-                // assign the path to ai component
-                Node* p = n_end;
-                while (p->parent != nullptr)
-                {
-                    e->path.push_front(Vector2Di(p->pos.x, p->pos.y));
-                    p = p->parent;
-                }
+                e->state = IdleActionSelect();
             }
 
-            // set dest
-            if (!e->path.empty() && e->current_path != e->path.front())
-                e->current_path = e->path.front();
-
-            // movement
-            Vector2Df scaled_dest = Vector2Df((e->current_path.x * 32 + 16) * game.load()->world_scale.x, e->current_path.y * 32 * game.load()->world_scale.y);
-            e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
-
-            // check arrived to pop
-            if ((scaled_dest - transform->position).Magnitude() <= 16 * game.load()->world_scale.x)
+            // perform action
+            switch (e->state)
             {
-                if (e->path.size() == 1)
-                {
-                    e->ended_path = new Vector2Di(e->path.front());
-                }
-                e->path.pop_front();
+            case AIComponent::STATE::IDLE:
+                IdleTime(enemy, delta_time);
+                break;
+
+            case AIComponent::STATE::IDLE_WALKING:
+                IdleWalking(enemy);
+                break;
+
+            default:
+                break;
             }
 
-            // debug
-            DebugMap(e);
+            // debug pathfinding
+            //DebugMap(e);
+
+            // debug state
+            //switch (e->state)
+            //{
+            //case AIComponent::STATE::IDLE:
+            //    std::cout << "idle" << std::endl;
+            //    break;
+
+            //case AIComponent::STATE::IDLE_WALKING:
+            //    std::cout << "idle walking" << std::endl;
+            //    break;
+
+            //default:
+            //    break;
+            //}
 		}
 
 		process_finished = true;
+        delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
 	}
+}
+
+AIComponent::STATE AIManager::IdleActionSelect()
+{
+    return AIComponent::STATE(rand() % (AIComponent::STATE::SIZE - 1) + 1);
+}
+
+void AIManager::IdleWalking(lecs::Entity* enemy)
+{
+    AIComponent* e = &enemy->GetComponent<AIComponent>();
+    TransformComponent* transform = &enemy->GetComponent<TransformComponent>();
+
+    if (e->path.empty())
+    {
+        // initialize the path
+        SetDest(e, transform);
+        SolveAStar();
+        e->ended_path = nullptr;
+
+        // assign the path to ai component
+        Node* p = n_end;
+        while (p->parent != nullptr)
+        {
+            e->path.push_front(Vector2Di(p->pos.x, p->pos.y));
+            p = p->parent;
+        }
+    }
+
+    // set dest
+    if (!e->path.empty() && e->current_path != e->path.front())
+        e->current_path = e->path.front();
+
+    // movement
+    Vector2Df scaled_dest = Vector2Df((e->current_path.x * 32 + 16) * game.load()->world_scale.x, e->current_path.y * 32 * game.load()->world_scale.y);
+    e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
+
+    // check arrived to pop
+    if ((scaled_dest - transform->position).Magnitude() <= 16 * game.load()->world_scale.x)
+    {
+        if (e->path.size() == 1)
+        {
+            e->ended_path = new Vector2Di(e->path.front());
+        }
+        e->path.pop_front();
+    }
+
+    // reset state
+    if (e->path.empty())
+    {
+        e->movement.store(new Vector2Df(0.f, 0.f));
+        e->state = AIComponent::STATE::NONE;
+    }
+}
+
+void AIManager::IdleTime(lecs::Entity* enemy, DeltaTime dt)
+{
+    AIComponent* e = &enemy->GetComponent<AIComponent>();
+
+    // set new time threshold
+    if (e->timer < 0.f)
+    {
+        e->idle_time_threshold = rand() % (max_idle - min_idle) + min_idle;
+        e->timer == 0.f;
+    }
+
+    // time
+    e->timer += dt;
+
+    // check if reached threshold
+    if (e->timer > e->idle_time_threshold)
+    {
+        e->timer = -1.f;
+        e->state = AIComponent::STATE::NONE;
+    }
 }
 
 void AIManager::SetDest(AIComponent* e, TransformComponent* transform)
