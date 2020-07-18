@@ -67,6 +67,8 @@ void Game::HandleInput(DeltaTime dt)
 		if (event.type == sf::Event::Closed) window.close();
 		if (event.type == sf::Event::Resized) camera_manager.camera.setSize(event.size.width, event.size.height);
 	}
+
+	ai_manager->Read(ecs_managers.entity_manager);
 }
 
 void Game::Update(DeltaTime dt)
@@ -92,8 +94,6 @@ void Game::Render()
 	ecs_managers.system_manager->GetSystem<TileMapSystem>().LateDraw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 	ecs_managers.system_manager->GetSystem<CollisionSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
 	ecs_managers.system_manager->GetSystem<ProjColSystem>().Draw(ecs_managers.entity_manager, ecs_managers.event_manager, &window);
-
-	ai_manager->Read();
 }
 
 bool Game::InsideView(sf::FloatRect rect)

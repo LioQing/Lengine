@@ -37,7 +37,7 @@ public:
 
 	void AddEnemy(AIComponent* c);
 
-	void Read();
+	void Read(lecs::EntityManager* eman);
 	void ReadMap();
 
 	void StartProcess();
@@ -54,10 +54,14 @@ private:
 
 	void SetDest(AIComponent* e, TransformComponent* transform);
 	void SolveAStar();
+	bool CanSeePlayer(lecs::Entity* enemy);
 
 	Node* nodes = nullptr;
 	Node* n_start = nullptr;
 	Node* n_end = nullptr;
 	Matrixi map;
 	std::vector<LevelComponent::Rect> rooms;
+
+	Vector2Df player_pos = { 0.f, 0.f };
+	bool is_player_dead = false;
 };

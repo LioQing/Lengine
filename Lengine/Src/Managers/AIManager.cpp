@@ -2,8 +2,71 @@
 
 #include <list>
 #include <lcs.h>
+#include <SFML/Graphics.hpp>
 
 extern std::atomic<Game*> game;
+
+namespace intersect
+{
+    // Given three colinear points p, q, r, the function checks if 
+    // point q lies on line segment 'pr' 
+    bool onSegment(Vector2Df p, Vector2Df q, Vector2Df r)
+    {
+        if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+            q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
+            return true;
+
+        return false;
+    }
+
+    // To find orientation of ordered triplet (p, q, r). 
+    // The function returns following values 
+    // 0 --> p, q and r are colinear 
+    // 1 --> Clockwise 
+    // 2 --> Counterclockwise 
+    int orientation(Vector2Df p, Vector2Df q, Vector2Df r)
+    {
+        // See https://www.geeksforgeeks.org/orientation-3-ordered-points/ 
+        // for details of below formula. 
+        int val = (q.y - p.y) * (r.x - q.x) -
+            (q.x - p.x) * (r.y - q.y);
+
+        if (val == 0) return 0;  // colinear 
+
+        return (val > 0) ? 1 : 2; // clock or counterclock wise 
+    }
+
+    // The main function that returns true if line segment 'p1q1' 
+    // and 'p2q2' intersect. 
+    bool doIntersect(Vector2Df p1, Vector2Df q1, Vector2Df p2, Vector2Df q2)
+    {
+        // Find the four orientations needed for general and 
+        // special cases 
+        int o1 = orientation(p1, q1, p2);
+        int o2 = orientation(p1, q1, q2);
+        int o3 = orientation(p2, q2, p1);
+        int o4 = orientation(p2, q2, q1);
+
+        // General case 
+        if (o1 != o2 && o3 != o4)
+            return true;
+
+        // Special Cases 
+        // p1, q1 and p2 are colinear and p2 lies on segment p1q1 
+        if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+        // p1, q1 and q2 are colinear and q2 lies on segment p1q1 
+        if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+        // p2, q2 and p1 are colinear and p1 lies on segment p2q2 
+        if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+        // p2, q2 and q1 are colinear and q1 lies on segment p2q2 
+        if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+        return false; // Doesn't fall in any of the above cases 
+    }
+}
 
 //LConsoleScreen lcs; // for debug
 
@@ -17,9 +80,11 @@ void AIManager::AddEnemy(AIComponent* c)
 	enemies.emplace_back(c);
 }
 
-void AIManager::Read()
+void AIManager::Read(lecs::EntityManager* entity_manager)
 {
-	process_finished = false;
+    lecs::Entity* player = entity_manager->GetGroup(lecs::GRP_PLAYER).entities.at(0);
+    player_pos = player->GetComponent<TransformComponent>().position;
+    is_player_dead = player->GetComponent<HealthComponent>().is_dead;
 }
 
 void AIManager::ReadMap()
@@ -101,17 +166,9 @@ void AIManager::AIProcess()
     // main process
 	for (;;)
 	{
-		while (process_finished == true) {}
-
 		for (auto& e : enemies)
 		{
             lecs::Entity* enemy = &entity_man->GetEntity(e->entity);
-
-            // update gun pt dir
-            if (*e->movement.load() != Vector2Df::Zero())
-            {
-                e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
-            }
 
             // if dead no action
             if (enemy->GetComponent<HealthComponent>().is_dead)
@@ -141,6 +198,22 @@ void AIManager::AIProcess()
                 break;
             }
 
+            // update gun pt dir
+            if (*e->movement.load() != Vector2Df::Zero())
+            {
+                e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
+            }
+
+            // check if can see player
+            if (game.load()->InsideView(sf::FloatRect(enemy->GetComponent<TransformComponent>().position.sfVector2f(), sf::Vector2f(0.f, 0.f))) && CanSeePlayer(enemy))
+            {
+                std::cout << "i can see u" << std::endl;
+            }
+            else
+            {
+                std::cout << "i cant see u" << std::endl;
+            }
+
             // debug pathfinding
             //DebugMap(e);
 
@@ -159,10 +232,43 @@ void AIManager::AIProcess()
             //    break;
             //}
 		}
-
-		process_finished = true;
         delta_time = static_cast<float>(delta_clock.restart().asMicroseconds()) / 1000;
 	}
+}
+
+bool AIManager::CanSeePlayer(lecs::Entity* enemy)
+{
+    AIComponent* e = &enemy->GetComponent<AIComponent>();
+    TransformComponent* transform = &enemy->GetComponent<TransformComponent>();
+
+    Vector2Df e_pos = transform->position;
+
+    for (int x = 0; x < map.width; ++x)
+    {
+        for (int y = 0; y < map.height; ++y)
+        {
+            if (!nodes[y * map.width + x].isObstacle) continue;
+
+            Vector2Df obstacle = Vector2Df(x, y) * game.load()->world_scale * 32.f;
+            Vector2Df size = game.load()->world_scale * 32.f;
+
+            sf::FloatRect obsRect = { obstacle.sfVector2f(), size.sfVector2f() };
+            if (!game.load()->InsideView(obsRect)) continue;
+
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(16.f, 0.f), obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(16.f, 0.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-16.f, 0.f), obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-16.f, 0.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 32.f), obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 32.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -32.f), obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -32.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+        }
+    }
+    return true;
 }
 
 AIComponent::STATE AIManager::IdleActionSelect()
