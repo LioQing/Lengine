@@ -133,7 +133,7 @@ namespace spawn
 		animation->AddAnimation("walk", 1, 8, 100);
 		BodyHitBoxComponent* bdhb = &player->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
 		HeadHitBoxComponent* hhb = &player->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
-		HealthComponent* hp = &player->AddComponent<HealthComponent>(100.f);
+		HealthComponent* hp = &player->AddComponent<HealthComponent>(99999.f);
 		hp->SetHealthBar({ 0.f, -32.f });
 
 		game.load()->ecs_managers.entity_manager->AddToGroup(player, lecs::GRP_ENTITY);

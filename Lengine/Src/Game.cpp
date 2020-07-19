@@ -51,6 +51,7 @@ void Game::Init()
 	//HitBoxSystem* hb_system = &ecs_managers.system_manager->GetSystem<HitBoxSystem>();
 	//hb_system->draw_characters = true;
 	//hb_system->draw_proj = true;
+	//ai_manager->debug_path = true;
 
 	// read map
 	ai_manager->ReadMap();

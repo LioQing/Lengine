@@ -68,7 +68,7 @@ namespace intersect
     }
 }
 
-//LConsoleScreen lcs; // for debug
+LConsoleScreen lcs; // for debug
 
 AIManager::AIManager()
 {
@@ -83,8 +83,10 @@ void AIManager::AddEnemy(AIComponent* c)
 void AIManager::Read(lecs::EntityManager* entity_manager)
 {
     lecs::Entity* player = entity_manager->GetGroup(lecs::GRP_PLAYER).entities.at(0);
-    player_pos = player->GetComponent<TransformComponent>().position;
-    is_player_dead = player->GetComponent<HealthComponent>().is_dead;
+
+    player_pos.store(new Vector2Df(player->GetComponent<TransformComponent>().position));
+    player_vel.store(new Vector2Df(player->GetComponent<TransformComponent>().velocity));
+    is_player_dead.store(player->GetComponent<HealthComponent>().is_dead);
 }
 
 void AIManager::ReadMap()
@@ -125,7 +127,7 @@ void AIManager::ReadMap()
     }
 
     rooms = lvl->rooms;
-    //lcs.Init(map.width, map.height, 16);
+    if (debug_path) lcs.Init(map.width, map.height, 16);
 }
 
 void AIManager::StartProcess()
@@ -137,27 +139,29 @@ void AIManager::AIProcess()
 {
     lecs::EntityManager* entity_man = game.load()->ecs_managers.entity_manager;
 
-    //auto DebugMap = [&](AIComponent* e) 
-    //{ 
-    //    lcs.FullFill(' ', BG_BLACK);
-    //    for (int x = 0; x < map.width; ++x)
-    //    {
-    //        for (int y = 0; y < map.height; ++y)
-    //        {
-    //            if (nodes[y * map.width + x].isObstacle)
-    //            {
-    //                lcs.Draw(x, y, PIXEL_SOLID);
-    //            }
-    //        }
-    //    }
-    //    for (auto& p : e->path)
-    //    {
-    //        lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
-    //    }
-    //    lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
-    //    lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
-    //    lcs.Display();
-    //};
+    auto DebugMap = [&](AIComponent* e) 
+    { 
+        if (!debug_path) return;
+
+        lcs.FullFill(' ', BG_BLACK);
+        for (int x = 0; x < map.width; ++x)
+        {
+            for (int y = 0; y < map.height; ++y)
+            {
+                if (nodes[y * map.width + x].isObstacle)
+                {
+                    lcs.Draw(x, y, PIXEL_SOLID);
+                }
+            }
+        }
+        for (auto& p : e->path)
+        {
+            lcs.Draw(p.x, p.y, PIXEL_SOLID, FG_YELLOW);
+        }
+        lcs.Draw(n_start->pos.x, n_start->pos.y, PIXEL_SOLID, FG_GREEN);
+        lcs.Draw(n_end->pos.x, n_end->pos.y, PIXEL_SOLID, FG_RED);
+        lcs.Display();
+    };
 
     // ai clock
     DeltaTime delta_time = 0u;
@@ -192,7 +196,8 @@ void AIManager::AIProcess()
                 break;
 
             case AIComponent::STATE::IDLE_WALKING:
-                IdleWalking(enemy);
+            case AIComponent::STATE::CHASE_PLAYER:
+                Walking(enemy);
                 break;
 
             default:
@@ -204,8 +209,9 @@ void AIManager::AIProcess()
             Vector2Df e_pos = enemy->GetComponent<TransformComponent>().position;
             if (game.load()->InsideView(sf::FloatRect(e_pos.sfVector2f(), sf::Vector2f(0.f, 0.f))) && CanSeePlayer(enemy))
             {
-                e->gun_pt_dir.store(&(player_pos - e_pos).Normalize());
+                e->gun_pt_dir.store(&(*player_pos.load() - e_pos).Normalize());
                 e->is_firing.store(true);
+                e->see_player = true;
             }
             else
             {
@@ -215,10 +221,18 @@ void AIManager::AIProcess()
                     e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
                 }
                 e->is_firing.store(false);
+                
+                // chase player
+                if (e->see_player)
+                {
+                    e->path.clear();
+                    e->state = AIComponent::STATE::CHASE_PLAYER;
+                    e->see_player = false;
+                }
             }
 
             // debug pathfinding
-            //DebugMap(e);
+            if (debug_path) DebugMap(e);
 
             // debug state
             //switch (e->state)
@@ -245,6 +259,7 @@ bool AIManager::CanSeePlayer(lecs::Entity* enemy)
     TransformComponent* transform = &enemy->GetComponent<TransformComponent>();
 
     Vector2Df e_pos = transform->position;
+    std::bitset<5> blocked = std::bitset<5>().reset();
 
     for (int x = 0; x < map.width; ++x)
     {
@@ -258,20 +273,39 @@ bool AIManager::CanSeePlayer(lecs::Entity* enemy)
             sf::FloatRect obsRect = { obstacle.sfVector2f(), size.sfVector2f() };
             if (!game.load()->InsideView(obsRect)) continue;
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(8.f, 0.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(8.f, 0.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (!blocked.test(0))
+            {
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(8.f, -16.f) * game.load()->world_scale, obstacle, obstacle + size)) blocked.set(0);
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(8.f, -16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) blocked.set(0);
+            }
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-8.f, 0.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-8.f, 0.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (!blocked.test(1))
+            {
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(-8.f, 16.f) * game.load()->world_scale, obstacle, obstacle + size)) blocked.set(1);
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(-8.f, 16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) blocked.set(1);
+            }
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 16.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (!blocked.test(2))
+            {
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(8.f, 16.f) * game.load()->world_scale, obstacle, obstacle + size)) blocked.set(2);
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(8.f, 16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) blocked.set(2);
+            }
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -16.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (!blocked.test(3))
+            {
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(-8.f, -16.f) * game.load()->world_scale, obstacle, obstacle + size)) blocked.set(3);
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load() + Vector2Df(-8.f, -16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) blocked.set(3);
+            }
+
+            if (!blocked.test(4))
+            {
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load(), obstacle, obstacle + size)) blocked.set(4);
+                if (intersect::doIntersect(e_pos + Vector2Df(-4.f, 0.f) * game.load()->world_scale, *player_pos.load(), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) blocked.set(4);
+            }
         }
     }
-    return true;
+
+    return !blocked.all();
 }
 
 AIComponent::STATE AIManager::IdleActionSelect()
@@ -279,7 +313,7 @@ AIComponent::STATE AIManager::IdleActionSelect()
     return AIComponent::STATE(rand() % 2 + 1);
 }
 
-void AIManager::IdleWalking(lecs::Entity* enemy)
+void AIManager::Walking(lecs::Entity* enemy)
 {
     AIComponent* e = &enemy->GetComponent<AIComponent>();
     TransformComponent* transform = &enemy->GetComponent<TransformComponent>();
@@ -287,7 +321,12 @@ void AIManager::IdleWalking(lecs::Entity* enemy)
     if (e->path.empty())
     {
         // initialize the path
-        SetDest(e, transform);
+        if (e->state == AIComponent::STATE::CHASE_PLAYER)
+            ChasePlayerDest(e, transform);
+        else
+            GenRandPath(e, transform);
+
+
         SolveAStar();
         e->ended_path = nullptr;
 
@@ -309,13 +348,17 @@ void AIManager::IdleWalking(lecs::Entity* enemy)
     e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
 
     // check arrived to pop
-    if ((scaled_dest - transform->position).Magnitude() <= 16 * game.load()->world_scale.x)
+    float arrive_radius;
+    if (e->path.size() == 1) arrive_radius = 8.f;
+    else arrive_radius = 16.f;
+
+    if ((scaled_dest - transform->position).Magnitude() <= arrive_radius * game.load()->world_scale.x)
     {
         if (e->path.size() == 1)
-        {
             e->ended_path = new Vector2Di(e->path.front());
-        }
-        e->path.pop_front();
+
+        if (e->path.size() >= 1)
+            e->path.pop_front();
     }
 
     // reset state
@@ -348,7 +391,20 @@ void AIManager::IdleTime(lecs::Entity* enemy, DeltaTime dt)
     }
 }
 
-void AIManager::SetDest(AIComponent* e, TransformComponent* transform)
+void AIManager::ChasePlayerDest(AIComponent* e, TransformComponent* transform)
+{
+    // set start position
+    Vector2Di start_pos = (transform->position / 32 / game.load()->world_scale).Cast<int>();
+    if (nodes[start_pos.y * map.width + start_pos.x].isObstacle) ++start_pos.y;
+    n_start = &nodes[start_pos.y * map.width + start_pos.x];
+
+    // set end postition
+    Vector2Di end_pos = (*player_pos.load() / 32 / game.load()->world_scale).Cast<int>();
+    if (nodes[end_pos.y * map.width + end_pos.x].isObstacle) ++end_pos.y;
+    n_end = &nodes[end_pos.y * map.width + end_pos.x];
+}
+
+void AIManager::GenRandPath(AIComponent* e, TransformComponent* transform)
 {
     // set start position
     Vector2Di start_pos;

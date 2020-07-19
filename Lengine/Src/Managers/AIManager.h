@@ -22,6 +22,8 @@ private:
 
 public:
 
+	bool debug_path = false;
+
 	struct Node
 	{
 		bool isObstacle = false;
@@ -49,10 +51,11 @@ private:
 	const int max_idle = 1.5e3;
 
 	AIComponent::STATE IdleActionSelect();
-	void IdleWalking(lecs::Entity* enemy);
+	void Walking(lecs::Entity* enemy);
 	void IdleTime(lecs::Entity* enemy, DeltaTime dt);
 
-	void SetDest(AIComponent* e, TransformComponent* transform);
+	void ChasePlayerDest(AIComponent* e, TransformComponent* transform);
+	void GenRandPath(AIComponent* e, TransformComponent* transform);
 	void SolveAStar();
 	bool CanSeePlayer(lecs::Entity* enemy);
 
@@ -62,6 +65,8 @@ private:
 	Matrixi map;
 	std::vector<LevelComponent::Rect> rooms;
 
-	Vector2Df player_pos = { 0.f, 0.f };
-	bool is_player_dead = false;
+	// cross thread var
+	std::atomic<Vector2Df*> player_pos = new Vector2Df(0.f, 0.f);
+	std::atomic<bool> is_player_dead = false;
+	std::atomic<Vector2Df*> player_vel = new Vector2Df(0.f, 0.f);
 };

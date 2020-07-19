@@ -13,6 +13,7 @@ struct AIComponent : lecs::Component
 		NONE,
 		IDLE,
 		IDLE_WALKING,
+		CHASE_PLAYER,
 
 		SIZE
 	};
@@ -32,6 +33,7 @@ struct AIComponent : lecs::Component
 
 	float timer = -1.f;
 	int idle_time_threshold;
+	bool see_player = false;
 
 	AIComponent(int room);
 
