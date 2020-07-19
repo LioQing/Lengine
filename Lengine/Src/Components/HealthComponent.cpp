@@ -1,6 +1,6 @@
 #include "HealthComponent.h"
 
-HealthComponent::HealthComponent(float max) : hp(100.f), max_hp(max)
+HealthComponent::HealthComponent(float max) : hp(max), max_hp(max)
 {
 	bar.setFillColor(sf::Color::Green);
 	bar.setOrigin(0.f, size.y / 2);

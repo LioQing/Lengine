@@ -20,6 +20,7 @@ struct AIComponent : lecs::Component
 	// cross thread variable
 	std::atomic<Vector2Df*> movement;
 	std::atomic<Vector2Df*> gun_pt_dir;
+	std::atomic<bool> is_firing;
 
 	// ai processor only
 	STATE state = STATE::NONE;

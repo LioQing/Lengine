@@ -39,6 +39,9 @@ void ItemSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMana
 	{
 		ItemComponent* item = &e->GetComponent<ItemComponent>();
 
+		if (e->HasComponent<HealthComponent>() && e->GetComponent<HealthComponent>().is_dead) 
+			continue;
+
 		if (item->item->HasComponent<GunComponent>())
 		{
 			SpriteComponent* sprite = &item->item->GetComponent<SpriteComponent>();
@@ -54,21 +57,40 @@ void ItemSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMana
 				}
 			}
 
-			if (e->HasGroup(lecs::GRP_PLAYER) && gun->ready && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			if (gun->ready)
 			{
-				Vector2Df position = game.load()->input_manager.world_mouse_pos - item->center;
-				float rad = atan2f(position.y, position.x);
+				Vector2Df position;
 
-				float tmp_y_pos = gun->muzzle_pos.y;
-				if (position.x < 0) tmp_y_pos *= -1;
+				// fire function
+				auto Fire = [&]()
+				{
+					float rad = atan2f(position.y, position.x);
 
-				Vector2Df g_muzzle_pos = 
-					item->center + 
-					Vector2Df((item->radius + gun->muzzle_pos.x) * cosf(rad), (item->radius + gun->muzzle_pos.x) * sinf(rad)) +
-					Vector2Df(tmp_y_pos * sinf(rad), -tmp_y_pos * cosf(rad));
+					float tmp_y_pos = gun->muzzle_pos.y;
+					if (position.x < 0) tmp_y_pos *= -1;
 
-				lecs::Entity* proj = spawn::Projectile(g_muzzle_pos, 12.f, 2400.f, 5.f, 10.f, rad * 180 / M_PI);
-				gun->ready = false;
+					Vector2Df g_muzzle_pos =
+						item->center +
+						Vector2Df((item->radius + gun->muzzle_pos.x) * cosf(rad), (item->radius + gun->muzzle_pos.x) * sinf(rad)) +
+						Vector2Df(tmp_y_pos * sinf(rad), -tmp_y_pos * cosf(rad));
+
+					lecs::Entity* proj = spawn::Projectile(g_muzzle_pos, 12.f, 2400.f, 5.f, 10.f, rad * 180 / M_PI);
+					gun->ready = false;
+				};
+
+				// player
+				if (e->HasGroup(lecs::GRP_PLAYER) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				{
+					position = game.load()->input_manager.world_mouse_pos - item->center;
+					Fire();
+				}
+				// bot
+				else if (e->HasGroup(lecs::GRP_ENEMY) && e->GetComponent<AIComponent>().is_firing.load() &&
+					!entity_manager->GetGroup(lecs::GRP_PLAYER).entities.at(0)->GetComponent<HealthComponent>().is_dead)
+				{
+					position = *e->GetComponent<AIComponent>().gun_pt_dir.load();
+					Fire();
+				}
 			}
 		}
 	}

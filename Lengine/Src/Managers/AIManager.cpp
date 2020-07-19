@@ -177,7 +177,8 @@ void AIManager::AIProcess()
                 continue;
             }
             
-            // gen idle action
+            // movement action
+            // gen idle move action
             if (!e->state)
             {
                 e->state = IdleActionSelect();
@@ -198,20 +199,22 @@ void AIManager::AIProcess()
                 break;
             }
 
-            // update gun pt dir
-            if (*e->movement.load() != Vector2Df::Zero())
+            // gun action
+            // can see player shoot
+            Vector2Df e_pos = enemy->GetComponent<TransformComponent>().position;
+            if (game.load()->InsideView(sf::FloatRect(e_pos.sfVector2f(), sf::Vector2f(0.f, 0.f))) && CanSeePlayer(enemy))
             {
-                e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
-            }
-
-            // check if can see player
-            if (game.load()->InsideView(sf::FloatRect(enemy->GetComponent<TransformComponent>().position.sfVector2f(), sf::Vector2f(0.f, 0.f))) && CanSeePlayer(enemy))
-            {
-                std::cout << "i can see u" << std::endl;
+                e->gun_pt_dir.store(&(player_pos - e_pos).Normalize());
+                e->is_firing.store(true);
             }
             else
             {
-                std::cout << "i cant see u" << std::endl;
+                // update gun pt dir
+                if (*e->movement.load() != Vector2Df::Zero())
+                {
+                    e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
+                }
+                e->is_firing.store(false);
             }
 
             // debug pathfinding
@@ -255,17 +258,17 @@ bool AIManager::CanSeePlayer(lecs::Entity* enemy)
             sf::FloatRect obsRect = { obstacle.sfVector2f(), size.sfVector2f() };
             if (!game.load()->InsideView(obsRect)) continue;
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(16.f, 0.f), obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(16.f, 0.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(8.f, 0.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(8.f, 0.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-16.f, 0.f), obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-16.f, 0.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-8.f, 0.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(-8.f, 0.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 32.f), obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 32.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 16.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, 16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
 
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -32.f), obstacle, obstacle + size)) return false;
-            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -32.f), obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -16.f) * game.load()->world_scale, obstacle, obstacle + size)) return false;
+            if (intersect::doIntersect(e_pos, player_pos + Vector2Df(0.f, -16.f) * game.load()->world_scale, obstacle + Vector2Df(size.x, 0.f), obstacle + Vector2Df(0.f, size.y))) return false;
         }
     }
     return true;
@@ -273,7 +276,7 @@ bool AIManager::CanSeePlayer(lecs::Entity* enemy)
 
 AIComponent::STATE AIManager::IdleActionSelect()
 {
-    return AIComponent::STATE(rand() % (AIComponent::STATE::SIZE - 1) + 1);
+    return AIComponent::STATE(rand() % 2 + 1);
 }
 
 void AIManager::IdleWalking(lecs::Entity* enemy)
