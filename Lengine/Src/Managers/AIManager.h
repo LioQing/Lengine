@@ -42,6 +42,7 @@ public:
 	void Read(lecs::EntityManager* eman);
 	void ReadMap();
 
+	void SpawnEnemy();
 	void StartProcess();
 	void AIProcess();
 

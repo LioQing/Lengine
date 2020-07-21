@@ -20,6 +20,8 @@ private:
 
 public:
 
+	lecs::Entity* player;
+
 	Vector2Df world_scale = Vector2Df(3.f, 3.f);
 
 	lecs::ECSManagers ecs_managers;

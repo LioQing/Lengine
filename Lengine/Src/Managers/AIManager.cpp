@@ -4,6 +4,8 @@
 #include <lcs.h>
 #include <SFML/Graphics.hpp>
 
+#include "../SpawnEntity.h"
+
 extern std::atomic<Game*> game;
 
 namespace intersect
@@ -84,8 +86,8 @@ void AIManager::Read(lecs::EntityManager* entity_manager)
 {
     lecs::Entity* player = entity_manager->GetGroup(lecs::GRP_PLAYER).entities.at(0);
 
-    player_pos.store(new Vector2Df(player->GetComponent<TransformComponent>().position));
-    player_vel.store(new Vector2Df(player->GetComponent<TransformComponent>().velocity));
+    *player_pos.load() = player->GetComponent<TransformComponent>().position;
+    *player_vel.load() = player->GetComponent<TransformComponent>().velocity;
     is_player_dead.store(player->GetComponent<HealthComponent>().is_dead);
 }
 
@@ -128,6 +130,35 @@ void AIManager::ReadMap()
 
     rooms = lvl->rooms;
     if (debug_path) lcs.Init(map.width, map.height, 16);
+}
+
+void AIManager::SpawnEnemy()
+{
+    auto Random = [&](int lower, int upper)
+    {
+        return rand() % (upper - lower + 1) + lower;
+    };
+
+    for (auto itr = std::next(rooms.begin()); itr != rooms.end(); ++itr)
+    {
+        auto& r = *itr;
+        int n = static_cast<int>(std::roundf((static_cast<float>(r.width) * r.height) / 25));
+
+        for (int i = 0; i < n; ++i)
+        {
+            for (;;)
+            {
+                Vector2Di m_position(Random(r.x, r.x + r.width), Random(r.y, r.y + r.height));
+                Vector2Df spawn_pos = m_position.Cast<float>() * game.load()->world_scale * 32.f;
+                if (map.At(m_position.x, m_position.y) == 0)
+                {
+                    spawn::Enemy(spawn_pos, itr - rooms.begin());
+                    break;
+                }
+            }
+            
+        }
+    }
 }
 
 void AIManager::StartProcess()
@@ -174,10 +205,14 @@ void AIManager::AIProcess()
 		{
             lecs::Entity* enemy = &entity_man->GetEntity(e->entity);
 
+            if ((enemy->GetComponent<TransformComponent>().position - *player_pos).Magnitude() > 600.f * game.load()->world_scale.x &&
+                (e->state == AIComponent::STATE::IDLE || e->state == AIComponent::STATE::IDLE_WALKING))
+                continue;
+
             // if dead no action
             if (enemy->GetComponent<HealthComponent>().is_dead)
             {
-                e->Dead();
+                if (*e->movement.load() != Vector2Df::Zero()) e->Dead();
                 continue;
             }
             
@@ -209,7 +244,7 @@ void AIManager::AIProcess()
             Vector2Df e_pos = enemy->GetComponent<TransformComponent>().position;
             if (game.load()->InsideView(sf::FloatRect(e_pos.sfVector2f(), sf::Vector2f(0.f, 0.f))) && CanSeePlayer(enemy))
             {
-                e->gun_pt_dir.store(&(*player_pos.load() - e_pos).Normalize());
+                *e->gun_pt_dir.load() = (*player_pos.load() - e_pos).Normalize();
                 e->is_firing.store(true);
                 e->see_player = true;
             }
@@ -218,7 +253,7 @@ void AIManager::AIProcess()
                 // update gun pt dir
                 if (*e->movement.load() != Vector2Df::Zero())
                 {
-                    e->gun_pt_dir.store(new Vector2Df(*e->movement.load()));
+                    *e->gun_pt_dir.load() = *e->movement.load();
                 }
                 e->is_firing.store(false);
                 
@@ -305,6 +340,7 @@ bool AIManager::CanSeePlayer(lecs::Entity* enemy)
         }
     }
 
+
     return !blocked.all();
 }
 
@@ -328,6 +364,7 @@ void AIManager::Walking(lecs::Entity* enemy)
 
 
         SolveAStar();
+        if (e->ended_path) delete e->ended_path;
         e->ended_path = nullptr;
 
         // assign the path to ai component
@@ -345,7 +382,7 @@ void AIManager::Walking(lecs::Entity* enemy)
 
     // movement
     Vector2Df scaled_dest = Vector2Df((e->current_path.x * 32 + 16) * game.load()->world_scale.x, e->current_path.y * 32 * game.load()->world_scale.y);
-    e->movement.store(new Vector2Df((scaled_dest - transform->position).Normalize()));
+    *e->movement.load() = (scaled_dest - transform->position).Normalize();
 
     // check arrived to pop
     float arrive_radius;
@@ -355,7 +392,10 @@ void AIManager::Walking(lecs::Entity* enemy)
     if ((scaled_dest - transform->position).Magnitude() <= arrive_radius * game.load()->world_scale.x)
     {
         if (e->path.size() == 1)
-            e->ended_path = new Vector2Di(e->path.front());
+        {
+            if (e->ended_path == nullptr) e->ended_path = new Vector2Di(e->path.front());
+            else *e->ended_path = e->path.front();
+        }
 
         if (e->path.size() >= 1)
             e->path.pop_front();
@@ -364,7 +404,7 @@ void AIManager::Walking(lecs::Entity* enemy)
     // reset state
     if (e->path.empty())
     {
-        e->movement.store(new Vector2Df(0.f, 0.f));
+        *e->movement.load() = Vector2Df(0.f, 0.f);
         e->state = AIComponent::STATE::NONE;
     }
 }

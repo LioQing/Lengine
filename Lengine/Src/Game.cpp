@@ -5,7 +5,7 @@
 #include "SpawnEntity.h"
 
 #include <memory>
-lecs::Entity* player;
+
 Game::Game(sf::RenderWindow& window) : window(window)
 {
 	ai_manager = new AIManager();
@@ -40,7 +40,7 @@ void Game::Init()
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x + .5f, map->GetComponent<LevelComponent>().rooms.at(0).center.y + .5f) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
 	player = spawn::Player(spawn_pos);
-	lecs::Entity* enemy = spawn::Enemy(spawn_pos, 0);
+	//spawn::Enemy(spawn_pos, 0);
 
 	// camera
 	camera_manager.SetFollow(&player->GetComponent<TransformComponent>().position);
@@ -55,6 +55,7 @@ void Game::Init()
 
 	// read map
 	ai_manager->ReadMap();
+	ai_manager->SpawnEnemy();
 	ai_manager->StartProcess();
 }
 

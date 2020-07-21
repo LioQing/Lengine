@@ -9,5 +9,5 @@ AIComponent::AIComponent(int room) : room(room)
 
 void AIComponent::Dead()
 {
-	movement.store(new Vector2Df(0.f, 0.f));
+	*movement.load() = Vector2Df(0.f, 0.f);
 }
