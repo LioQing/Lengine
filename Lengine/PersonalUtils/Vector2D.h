@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 #include <SFML/System/Vector2.hpp>
 
 #ifndef M_PI
@@ -295,6 +296,24 @@ public:
 		return (v1.x * v2.y) - (v1.y * v2.x);
 	}
 
+	// 0 --> collinear
+	// >0 -> clockwise 
+	// <0 -> counterclockwise 
+	double OrientationEx(const Vec2& v2, const Vec2& v3) const
+	{
+		return (static_cast<long double>(v2.y) - y) * (static_cast<long double>(v3.x) - v2.x) - (static_cast<long double>(v2.x) - x) * (static_cast<long double>(v3.y) - v2.y);
+	}
+	// 0 --> collinear
+	// 1 --> clockwise 
+	// -1 -> counterclockwise 
+	int Orientation(const Vec2& v2, const Vec2& v3) const
+	{
+		double val = OrientationEx(v2, v3);
+
+		if (val == 0.0) return 0;
+		return (val > 0.0) ? 1 : -1;
+	}
+
 	static Vec2 One()
 	{
 		return Vec2(1, 1);
@@ -343,6 +362,12 @@ public:
 	static Vec2<T> ToVector2D(const sf::Vector2<TArg> sfv)
 	{
 		return Vec2<T>(sfv.x, sfv.y);
+	}
+
+	friend std::ostream& operator<<(std::ostream& o, const Vec2& v)
+	{
+		o << v.x << ", " << v.y;
+		return o;
 	}
 };
 

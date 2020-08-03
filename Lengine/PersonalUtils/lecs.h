@@ -146,7 +146,7 @@ namespace lecs
 
 			if (id > MAX_COMPONENT) logger.AddLog
 			(
-				"Error: new component id for Component " + std::string(typeid(T).name()) + " exceed MAX_COMPONENT",
+				"Error: new component id for Component \n" + std::string(typeid(T).name()) + " exceed MAX_COMPONENT",
 				LT_ERROR
 			);
 
