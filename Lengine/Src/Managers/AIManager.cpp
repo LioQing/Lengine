@@ -265,7 +265,6 @@ void AIManager::AIProcess()
 				{
 					auto mv_dir = *e->movement.load();
 					int orientation = Vec2<float>::Zero().Orientation(*e->gun_pt_dir.load(), mv_dir);
-					std::cout << mv_dir << " | " << *e->gun_pt_dir.load() << std::endl;
 					e->gun_pt_dir.load()->Rotate(2.f * (orientation == 0 ? 1 : -orientation));
 					e->gun_pt_dir.load()->Normalize();
 					if (Vec2<float>::Zero().Orientation(*e->gun_pt_dir.load(), mv_dir) != orientation)

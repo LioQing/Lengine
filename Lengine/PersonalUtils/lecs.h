@@ -130,6 +130,8 @@ namespace lecs
 	{
 	public:
 
+		virtual ~Component() {}
+
 		// the next component id to be assigned
 		static uint32_t NextComponentID()
 		{
@@ -198,6 +200,8 @@ namespace lecs
 
 		Entity(EntityManager& entity_manager, uint32_t id) : entity_manager(entity_manager), id(id) {}
 
+		virtual ~Entity() {}
+
 		// check if the entity is active
 		bool IsActive()
 		{
@@ -208,11 +212,11 @@ namespace lecs
 		// immediate = false, destroy until the next update of entity manager
 		void Destroy(bool immediate = false);
 
-		// add component T to this entity
-		// pass in unique_ptr type
-		template <typename T>
-		T& AddComponent(std::unique_ptr<T> u_ptr)
+		// pass in contructor argument of component
+		template <typename T, typename... TArgs>
+		T* AddComponent(TArgs&&... mArgs)
 		{
+			std::unique_ptr<Component> u_ptr{ std::make_unique<T>(std::forward<TArgs>(mArgs)...) };
 			u_ptr->entity = id;
 
 			components[Component::GetComponentTypeID<T>()] = std::move(u_ptr);
@@ -223,44 +227,7 @@ namespace lecs
 				"New component added to entity: Component " + std::string(typeid(T).name()) + " added to Entity " + std::to_string(id),
 				LT_COMPONENT, LT_CREATE
 			);
-			return *u_ptr.get();
-		}
-
-		// pass in component
-		template <typename T>
-		T& AddComponent(const T& c)
-		{
-			c->entity = id;
-			std::unique_ptr<Component> u_ptr{ c };
-
-			components[Component::GetComponentTypeID<T>()] = std::move(u_ptr);
-			component_bitset[Component::GetComponentTypeID<T>()] = true;
-
-			logger.AddLog
-			(
-				"New component added to entity: Component " + std::string(typeid(T).name()) + " added to Entity " + std::to_string(id),
-				LT_COMPONENT, LT_CREATE
-			);
-			return *c;
-		}
-
-		// pass in contructor argument of component
-		template <typename T, typename... TArgs>
-		T& AddComponent(TArgs&&... mArgs)
-		{
-			T* c(new T(std::forward<TArgs>(mArgs)...));
-			c->entity = id;
-			std::unique_ptr<Component> u_ptr{ c };
-
-			components[Component::GetComponentTypeID<T>()] = std::move(u_ptr);
-			component_bitset[Component::GetComponentTypeID<T>()] = true;
-
-			logger.AddLog
-			(
-				"New component added to entity: Component " + std::string(typeid(T).name()) + " added to Entity " + std::to_string(id),
-				LT_COMPONENT, LT_CREATE
-			);
-			return *c;
+			return static_cast<T*>(components[Component::GetComponentTypeID<T>()].get());
 		}
 
 		// remove component T from this entity
@@ -268,7 +235,7 @@ namespace lecs
 		T& RemoveComponent()
 		{
 			T c = *static_cast<T*>(components[Component::GetComponentTypeID<T>()].get());
-			delete components[Component::GetComponentTypeID<T>()].release();
+			components[Component::GetComponentTypeID<T>()].reset();
 			component_bitset[Component::GetComponentTypeID<T>()] = false;
 
 			logger.AddLog
@@ -385,7 +352,7 @@ namespace lecs
 				{
 					uint32_t id_tmp = e->id;
 					empty_id.push_back(e->id);
-					delete e.release();
+					e.reset();
 
 					logger.AddLog
 					(
@@ -400,7 +367,7 @@ namespace lecs
 		void ImmediateDestroy(uint32_t id)
 		{
 			empty_id.push_back(id);
-			delete entities.at(id).release();
+			entities.at(id).reset();
 
 			logger.AddLog
 			(
@@ -522,20 +489,8 @@ namespace lecs
 		}
 	}
 
-	class Event;
+	class EventSubscriber;
 	class EventManager;
-
-	// base event subscriber class for all class that will subscribe to events
-	class EventSubscriber
-	{
-	public:
-
-		// vector of id of subscribed event
-		std::vector<uint32_t> subscribed;
-
-		// receive function to be called when an subscribed event is emitted
-		virtual void Receive(Event&) {}
-	};
 
 	// base event class for all event class
 	class Event
@@ -570,13 +525,24 @@ namespace lecs
 		bool IsEvent() const;
 	};
 
+	// base event subscriber class for all class that will subscribe to events
+	class EventSubscriber
+	{
+	public:
+
+		// vector of id of subscribed event
+		std::vector<uint32_t> subscribed;
+
+		// receive function to be called when an subscribed event is emitted
+		virtual void Receive(Event&) {}
+	};
+
 	// event manager class to manage all event
 	class EventManager
 	{
 	private:
 
 		EntityManager* entity_manager;
-		uint32_t next_event_id = 0;
 
 	public:
 
@@ -588,10 +554,16 @@ namespace lecs
 
 		// get the event id
 		// create a new event id if the event type is never assigned an id before
-		template <typename T>
-		inline uint32_t GetEventID()
+		static uint32_t NextEventID()
 		{
-			static uint32_t id = next_event_id++;
+			static uint32_t next_component_id = 0;
+			return next_component_id++;
+		}
+
+		template <typename T>
+		static uint32_t GetEventID()
+		{
+			static uint32_t id = NextEventID();
 			return id;
 		}
 
@@ -630,14 +602,15 @@ namespace lecs
 		// emit event T to all subscriber of that event
 		// pass in aArgs to constructor of event T
 		template <typename T, typename... TArgs>
-		void Emit(TArgs... aArgs)
+		void Emit(TArgs&&... aArgs)
 		{
 			AddEvent<T>();
+			T ev(std::forward<TArgs>(aArgs)...);
+			ev.SetEventManager(this);
+			ev.id = GetEventID<T>();
+
 			for (auto& sub : events.at(GetEventID<T>())->subscribers)
 			{
-				T ev(T(std::forward<TArgs>(aArgs)...));
-				ev.SetEventManager(this);
-				ev.id = GetEventID<T>();
 				sub->Receive(ev);
 			}
 

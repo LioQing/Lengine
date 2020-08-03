@@ -1,6 +1,5 @@
 TODO list:
 
-- AI rotation (change to not instant)
 - AI shoot according to player vel
 - item pickup
 - item drop

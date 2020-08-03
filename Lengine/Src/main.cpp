@@ -19,7 +19,7 @@ int main()
     game = new Game(window);
     game.load()->Init();
 
-    while (window.isOpen())
+    while (window.isOpen() || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
     {
         game.load()->HandleInput(delta_time);
         game.load()->Update(delta_time);
