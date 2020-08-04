@@ -1,6 +1,5 @@
 TODO list:
 
-- AI shoot according to player vel
 - item pickup
 - item drop
 - different item

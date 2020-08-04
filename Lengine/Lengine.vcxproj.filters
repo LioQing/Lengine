@@ -111,6 +111,9 @@
     <ClCompile Include="Src\Components\AIComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Components\Items\BaseItemComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Game.h">
@@ -237,6 +240,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PersonalUtils\lcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Components\Items\BaseItemComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

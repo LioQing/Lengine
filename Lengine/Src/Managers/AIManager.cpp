@@ -148,7 +148,7 @@ void AIManager::SpawnEnemy()
 		{
 			for (;;)
 			{
-				Vector2Di m_position(Random(r.x, r.x + r.width), Random(r.y, r.y + r.height));
+				Vector2Di m_position(Random(r.x + 2, r.x + r.width - 2), Random(r.y + 2, r.y + r.height - 2));
 				Vector2Df spawn_pos = m_position.Cast<float>() * game.load()->world_scale * 32.f;
 				if (map.At(m_position.x, m_position.y) == 0)
 				{
@@ -246,7 +246,8 @@ void AIManager::AIProcess()
 			{
 				if (*e->gun_pt_dir.load() != (*player_pos.load() - e_pos).Normalize())
 				{
-					auto player_dir = (*player_pos.load() - e_pos).Normalize();
+					auto ep_vec = *player_pos.load() - e_pos;
+					auto player_dir = (ep_vec + *player_vel.load() * ep_vec.Magnitude() * 0.3f).Normalize(); // 0.3f to be changed
 					int orientation = Vec2<float>::Zero().Orientation(*e->gun_pt_dir.load(), player_dir);
 					e->gun_pt_dir.load()->Rotate(5.f * (orientation == 0 ? 1 : -orientation));
 					e->gun_pt_dir.load()->Normalize();

@@ -83,11 +83,12 @@ namespace spawn
 		return map;
 	}
 
-	inline lecs::Entity* Weapon()
+	inline lecs::Entity* Weapon(Vector2Df pos, bool isDropped)
 	{
 		lecs::Entity* item = &game.load()->ecs_managers.entity_manager->AddEntity();
 		SpriteComponent* sprite = item->AddComponent<SpriteComponent>("glock", Vector2Df(4.5f, 1.f));
-		TransformComponent* transform = item->AddComponent<TransformComponent>(Vector2Df(400, 320), sprite->sprite.getTextureRect().width,
+		sprite->SetDrawOrderPoint(isDropped ? 0.f : BaseItemComponent::equipped_dop * game.load()->world_scale.y);
+		TransformComponent* transform = item->AddComponent<TransformComponent>(pos, sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game.load()->world_scale);
 		GunComponent* gun = item->AddComponent<GunComponent>(
 			Vector2Df
@@ -96,8 +97,9 @@ namespace spawn
 				0.f
 			),
 			75.f);
+		BaseItemComponent* bitem = item->AddComponent<BaseItemComponent>(isDropped);
 
-		game.load()->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_ITEM);
+		game.load()->ecs_managers.entity_manager->AddToGroup(item, lecs::GRP_ENTITY);
 
 		return item;
 	}
@@ -123,7 +125,7 @@ namespace spawn
 	inline lecs::Entity* Player(Vector2Df position)
 	{
 		lecs::Entity* player = &game.load()->ecs_managers.entity_manager->AddEntity();
-		ItemComponent* item = player->AddComponent<ItemComponent>(Weapon(), 32.f, true);
+		ItemComponent* item = player->AddComponent<ItemComponent>(Weapon(Vector2Df::Zero(), false), 32.f, true);
 		SpriteComponent* sprite = player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = player->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, 4.f);
 		ColliderComponent* collider = player->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 12 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::PLAYER);
@@ -145,7 +147,7 @@ namespace spawn
 	inline lecs::Entity* Enemy(Vector2Df position, int room)
 	{
 		lecs::Entity* enemy = &game.load()->ecs_managers.entity_manager->AddEntity();
-		ItemComponent* item = enemy->AddComponent<ItemComponent>(Weapon(), 32.f, true);
+		ItemComponent* item = enemy->AddComponent<ItemComponent>(Weapon(Vector2Df::Zero(), false), 32.f, true);
 		SpriteComponent* sprite = enemy->AddComponent<SpriteComponent>("enemy", Vector2Df(16.f, 16.f));
 		TransformComponent* transform = enemy->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, 4.f);
 		ColliderComponent* collider = enemy->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 12 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);

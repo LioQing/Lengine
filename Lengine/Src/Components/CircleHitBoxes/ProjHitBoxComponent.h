@@ -13,7 +13,6 @@ struct ProjHitBoxComponent : public lecs::Component
 
 	ProjHitBoxComponent(float r);
 	ProjHitBoxComponent(float r, float x, float angle);
-	~ProjHitBoxComponent();
 
 	void InitCircle();
 };

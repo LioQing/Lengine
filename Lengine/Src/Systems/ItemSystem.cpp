@@ -105,4 +105,35 @@ void ItemSystem::Update(lecs::EntityManager* entity_manager, lecs::EventManager*
 		if (e->HasGroup(lecs::GRP_PLAYER)) item->RenderSprite(game.load()->input_manager.world_mouse_pos - item->center);
 		else if (e->HasGroup(lecs::GRP_ENEMY)) item->RenderSprite(*e->GetComponent<AIComponent>().gun_pt_dir.load());
 	}
+
+	// pick up items
+	static bool isEDown = false;
+	auto& player_trans = game.load()->player->GetComponent<TransformComponent>();
+
+	for (auto& e : entity_manager->EntityFilter<BaseItemComponent>().entities)
+	{
+		BaseItemComponent* bitem = &e->GetComponent<BaseItemComponent>();
+		
+		if (bitem->isDropped)
+		{
+			if (e->GetComponent<TransformComponent>().position.Distance(player_trans.position + Vector2Df(0.f, 12.f) * game.load()->world_scale) > 16.f * game.load()->world_scale.x) // pick up range
+				continue;
+
+			if (!isEDown && sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+			{
+				auto& eitem = game.load()->player->GetComponent<ItemComponent>().item;
+				eitem->GetComponent<BaseItemComponent>().isDropped = true;
+				eitem->GetComponent<SpriteComponent>().SetDrawOrderPoint(0.f);
+				eitem->GetComponent<TransformComponent>().position = player_trans.position + Vector2Df(0.f, 12.f) * game.load()->world_scale;
+
+				bitem->isDropped = false;
+				game.load()->player->GetComponent<ItemComponent>().item = e;
+				e->GetComponent<SpriteComponent>().SetDrawOrderPoint(BaseItemComponent::equipped_dop);
+
+				break;
+			}
+		}
+	}
+
+	isEDown = sf::Keyboard::isKeyPressed(sf::Keyboard::E);
 }

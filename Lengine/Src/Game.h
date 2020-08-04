@@ -41,4 +41,5 @@ public:
 	void Render();
 
 	bool InsideView(sf::FloatRect);
+	sf::RenderWindow& GetWindow();
 };

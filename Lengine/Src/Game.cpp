@@ -40,6 +40,7 @@ void Game::Init()
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x + .5f, map->GetComponent<LevelComponent>().rooms.at(0).center.y + .5f) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
 	player = spawn::Player(spawn_pos);
+	spawn::Weapon(spawn_pos, true);
 	//spawn::Enemy(spawn_pos, 0);
 
 	// camera
@@ -106,4 +107,9 @@ bool Game::InsideView(sf::FloatRect rect)
 		rect.top + rect.height < camera_manager.GetViewBounds().top)
 		return false;
 	return true;
+}
+
+sf::RenderWindow& Game::GetWindow()
+{
+	return window;
 }

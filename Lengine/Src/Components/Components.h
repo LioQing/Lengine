@@ -13,6 +13,7 @@
 #include "HealthComponent.h"
 #include "AIComponent.h"
 
+#include "Items/BaseItemComponent.h"
 #include "Items/GunComponent.h"
 
 #include "CircleHitBoxes/BodyHitBoxComponent.h"
