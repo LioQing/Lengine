@@ -152,7 +152,7 @@ void AIManager::SpawnEnemy()
 				Vector2Df spawn_pos = m_position.Cast<float>() * game.load()->world_scale * 32.f;
 				if (map.At(m_position.x, m_position.y) == 0)
 				{
-					spawn::Enemy(spawn_pos, itr - rooms.begin());
+					spawn::Enemy(spawn_pos, itr - rooms.begin(), 1.2f);
 					break;
 				}
 			}

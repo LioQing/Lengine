@@ -112,7 +112,7 @@ namespace spawn
 		sprite->SetDrawOrderPoint(64.f);
 		TransformComponent* transform = projectile->AddComponent<TransformComponent>(position, sprite->sprite.getTextureRect().width,
 			sprite->sprite.getTextureRect().height, game.load()->world_scale);
-		transform->speed = speed;
+		transform->speed = speed * game.load()->world_scale.x;
 		if (angle > 90 && angle < 270 || angle < -90 && angle > -270) transform->scale.y = fabsf(transform->scale.y) * -1;
 		ProjectileComponent* projectileC = projectile->AddComponent<ProjectileComponent>(position, angle, decay);
 		ProjHitBoxComponent* phb = projectile->AddComponent<ProjHitBoxComponent>(radius, hitbox_off, angle);
@@ -122,19 +122,19 @@ namespace spawn
 		return projectile;
 	}
 
-	inline lecs::Entity* Player(Vector2Df position)
+	inline lecs::Entity* Player(Vector2Df position, float speed)
 	{
 		lecs::Entity* player = &game.load()->ecs_managers.entity_manager->AddEntity();
-		ItemComponent* item = player->AddComponent<ItemComponent>(Weapon(Vector2Df::Zero(), false), 32.f, true);
+		ItemComponent* item = player->AddComponent<ItemComponent>(Weapon(Vector2Df::Zero(), false), 10.f * game.load()->world_scale.x, true);
 		SpriteComponent* sprite = player->AddComponent<SpriteComponent>("player", Vector2Df(16.f, 16.f));
-		TransformComponent* transform = player->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, 4.f);
+		TransformComponent* transform = player->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, speed * game.load()->world_scale.x);
 		ColliderComponent* collider = player->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 12 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::PLAYER);
-		collider->SetOffset(Vector2Df(0.f, 3.f) * game.load()->world_scale + Vector2Df(0.f, transform->height));
+		collider->SetOffset(Vector2Df(0.f, transform->height / 2 - 2.f) * game.load()->world_scale);
 		AnimationComponent* animation = player->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
 		animation->AddAnimation("walk", 1, 8, 100);
-		BodyHitBoxComponent* bdhb = player->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
-		HeadHitBoxComponent* hhb = player->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
+		BodyHitBoxComponent* bdhb = player->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 3.f) * game.load()->world_scale, 6.667f * game.load()->world_scale.x);
+		HeadHitBoxComponent* hhb = player->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -3.333f) * game.load()->world_scale, 5.333f * game.load()->world_scale.x);
 		HealthComponent* hp = player->AddComponent<HealthComponent>(99999.f);
 		hp->SetHealthBar({ 0.f, -32.f });
 
@@ -144,20 +144,20 @@ namespace spawn
 		return player;
 	}
 
-	inline lecs::Entity* Enemy(Vector2Df position, int room)
+	inline lecs::Entity* Enemy(Vector2Df position, int room, float speed)
 	{
 		lecs::Entity* enemy = &game.load()->ecs_managers.entity_manager->AddEntity();
-		ItemComponent* item = enemy->AddComponent<ItemComponent>(Weapon(Vector2Df::Zero(), false), 32.f, true);
+		ItemComponent* item = enemy->AddComponent<ItemComponent>(Weapon(Vector2Df::Zero(), false), 10.f * game.load()->world_scale.x, true);
 		SpriteComponent* sprite = enemy->AddComponent<SpriteComponent>("enemy", Vector2Df(16.f, 16.f));
-		TransformComponent* transform = enemy->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, 4.f);
+		TransformComponent* transform = enemy->AddComponent<TransformComponent>(position, 32, 32, game.load()->world_scale, speed * game.load()->world_scale.x);
 		ColliderComponent* collider = enemy->AddComponent<ColliderComponent>(4 * game.load()->world_scale.x, 12 * game.load()->world_scale.y, true, true, ColliderComponent::TAG::ENEMY);
-		collider->SetOffset(Vector2Df(0.f, 3.f) * game.load()->world_scale + Vector2Df(0.f, transform->height));
+		collider->SetOffset(Vector2Df(0.f, transform->height / 2 - 2.f) * game.load()->world_scale);
 		AnimationComponent* animation = enemy->AddComponent<AnimationComponent>();
 		animation->AddAnimation("idle", 0, 2, 300);
 		animation->AddAnimation("walk", 1, 8, 100);
 		animation->AddAnimation("dead", 2, 1, 0);
-		BodyHitBoxComponent* bdhb = enemy->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 18.f), 20);
-		HeadHitBoxComponent* hhb = enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -10.f), 16);
+		BodyHitBoxComponent* bdhb = enemy->AddComponent<BodyHitBoxComponent>(Vector2Df(0.f, 3.f) * game.load()->world_scale, 6.667f * game.load()->world_scale.x);
+		HeadHitBoxComponent* hhb = enemy->AddComponent<HeadHitBoxComponent>(Vector2Df(0.f, -3.333f) * game.load()->world_scale, 5.333f * game.load()->world_scale.x);
 		HealthComponent* hp = enemy->AddComponent<HealthComponent>(100.f);
 		hp->SetHealthBar({ 0.f, -32.f });
 		AIComponent* ai = enemy->AddComponent<AIComponent>(room);

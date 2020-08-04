@@ -74,7 +74,7 @@ void ItemSystem::LateUpdate(lecs::EntityManager* entity_manager, lecs::EventMana
 						Vector2Df((item->radius + gun->muzzle_pos.x) * cosf(rad), (item->radius + gun->muzzle_pos.x) * sinf(rad)) +
 						Vector2Df(tmp_y_pos * sinf(rad), -tmp_y_pos * cosf(rad));
 
-					lecs::Entity* proj = spawn::Projectile(g_muzzle_pos, 12.f, 2400.f, 5.f, 10.f, rad * 180 / M_PI);
+					lecs::Entity* proj = spawn::Projectile(g_muzzle_pos, 4.f, 2400.f, 5.f, 10.f, rad * 180 / M_PI); // to be changed
 					gun->ready = false;
 				};
 

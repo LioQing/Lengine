@@ -15,7 +15,7 @@ ProjHitBoxComponent::ProjHitBoxComponent(float r, float x_offset, float angle) :
 
 void ProjHitBoxComponent::InitCircle()
 {
-	circle.setRadius(radius);
+	circle.setRadius(this->radius);
 	circle.setFillColor(sf::Color(sf::Color::Transparent));
 	circle.setOutlineColor(sf::Color(sf::Color::Green));
 	circle.setOrigin(circle.getRadius(), circle.getRadius());

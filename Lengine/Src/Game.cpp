@@ -39,7 +39,7 @@ void Game::Init()
 	lecs::Entity* map = spawn::Map();
 	Vector2Df spawn_pos = Vector2Df(map->GetComponent<LevelComponent>().rooms.at(0).center.x + .5f, map->GetComponent<LevelComponent>().rooms.at(0).center.y + .5f) * world_scale * map->GetComponent<TileMapComponent>().tile_size;
 
-	player = spawn::Player(spawn_pos);
+	player = spawn::Player(spawn_pos, 1.6f);
 	spawn::Weapon(spawn_pos, true);
 	//spawn::Enemy(spawn_pos, 0);
 

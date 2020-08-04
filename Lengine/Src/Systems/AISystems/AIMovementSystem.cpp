@@ -11,6 +11,10 @@ void AIMovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Ev
 		TransformComponent* transform = &e->GetComponent<TransformComponent>();
 		AIComponent* ai = &e->GetComponent<AIComponent>();
 
+		// ensure no x speed
+		if (transform->x_speed != 0)
+			transform->x_speed = 0;
+
 		// movement
 		transform->velocity = ai->movement.load()->Cast<float>();
 

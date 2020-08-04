@@ -3,6 +3,9 @@
 #include <SFML/System.hpp>
 
 #include "../Components/Components.h"
+#include "../Game.h"
+
+extern std::atomic<Game*> game;
 
 void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::EventManager* event_manager, DeltaTime delta_time)
 {
@@ -41,7 +44,7 @@ void MovementSystem::HandleInput(lecs::EntityManager* entity_manager, lecs::Even
 		// running
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 		{
-			transform->x_speed = 2.f;
+			transform->x_speed = 0.7 * game.load()->world_scale.x;
 		}
 		else
 		{
